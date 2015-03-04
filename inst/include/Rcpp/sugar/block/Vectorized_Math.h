@@ -80,6 +80,15 @@ private:
 } // sugar
 } // Rcpp
 
+
+// This use of VECTORIZATION_FRAG fixes https://github.com/jmp75/Rcpp/issues/1
+#ifdef _MSC_VER
+#define VECTORIZATION_FRAG(__NAME__,__SYMBOL__) __NAME__(SEXP x){ return sugar::Vectorized<__SYMBOL__, true, NumericVector>(NumericVector(x)); }       
+#else
+#define VECTORIZATION_FRAG(__NAME__,__SYMBOL__) __NAME__(SEXP x){ return __NAME__(NumericVector(x)); }        
+#endif
+
+
 #define VECTORIZED_MATH_1(__NAME__,__SYMBOL__)                               \
 namespace Rcpp{                                                              \
         template <bool NA, typename T>                                           \
@@ -88,7 +97,7 @@ namespace Rcpp{                                                              \
                 return sugar::Vectorized<__SYMBOL__,NA,T>( t ) ;                     \
         }                                                                        \
         inline sugar::Vectorized<__SYMBOL__,true,NumericVector>                  \
-        __NAME__( SEXP x){ return __NAME__( NumericVector( x ) ) ; }             \
+			VECTORIZATION_FRAG(__NAME__,__SYMBOL__)              \
         template <bool NA, typename T>                                           \
         inline sugar::Vectorized_INTSXP<__SYMBOL__,NA,T>                         \
         __NAME__( const VectorBase<INTSXP,NA,T>& t      ){                           \
