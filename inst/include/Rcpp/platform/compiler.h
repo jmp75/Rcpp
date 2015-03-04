@@ -39,6 +39,46 @@
 #define GOOD_COMPILER_FOR_RCPP
 #endif
 
+#ifdef _MSC_VER
+#if (_MSC_VER == 1800) // Visual Studio 2013
+#define GOOD_COMPILER_FOR_RCPP
+
+// Credits and source for the snprintf emulation:
+// http://stackoverflow.com/a/8712996/2752565
+#include <stdarg.h>
+#include <stdio.h>
+
+inline int c99_vsnprintf(char* str, size_t size, const char* format, va_list ap)
+{
+	int count = -1;
+
+	if (size != 0)
+		count = _vsnprintf_s(str, size, _TRUNCATE, format, ap);
+	if (count == -1)
+		count = _vscprintf(format, ap);
+
+	return count;
+}
+
+inline int c99_snprintf(char* str, size_t size, const char* format, ...)
+{
+	int count;
+	va_list ap;
+
+	va_start(ap, format);
+	count = c99_vsnprintf(str, size, format, ap);
+	va_end(ap);
+
+	return count;
+}
+
+#define snprintf c99_snprintf
+
+#elif (_MSC_VER == 1900) // VS next after 2013
+// Nothing yet, but snprintf should finally be supported
+#endif
+#endif
+
 #ifndef GOOD_COMPILER_FOR_RCPP
 # error "This compiler is not supported"
 #endif
