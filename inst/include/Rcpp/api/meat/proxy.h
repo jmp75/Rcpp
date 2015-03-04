@@ -172,22 +172,14 @@ DottedPairProxyPolicy<CLASS>::const_DottedPairProxy::operator T() const {
     return as<T>(get());
 }
 
-// FieldProxy
-template <typename CLASS>
-typename FieldProxyPolicy<CLASS>::FieldProxy&
-FieldProxyPolicy<CLASS>::FieldProxy::operator=(const FieldProxyPolicy<CLASS>::FieldProxy& rhs) {
-    if (this != &rhs) set(rhs.get());
-    return *this;
-}
-
 template <typename CLASS>
 template <typename T>
 typename FieldProxyPolicy<CLASS>::FieldProxy&
 FieldProxyPolicy<CLASS>::FieldProxy::operator=(const T& rhs) {
-    SEXP tmp = PROTECT(wrap(rhs));
-    set(tmp);
-    UNPROTECT(1);
-    return *this;
+	SEXP tmp = PROTECT(wrap(rhs));
+	set(tmp);
+	UNPROTECT(1);
+	return *this;
 }
 
 template <typename CLASS>

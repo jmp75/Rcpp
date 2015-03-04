@@ -29,9 +29,12 @@ public:
         FieldProxy( CLASS& v, const std::string& name) :
             parent(v), field_name(name) {}
 
-        FieldProxy& operator=(const FieldProxy& rhs);
+		FieldProxy& operator=(const FieldProxy& rhs){
+			if (this != &rhs) set(rhs.get());
+			return *this;
+		}
 
-        template <typename T> FieldProxy& operator=(const T& rhs);
+		template <typename T> FieldProxy& operator=(const T& rhs);
 
         template <typename T> operator T() const;
         inline operator SEXP() const { return get(); }
@@ -50,6 +53,8 @@ public:
             parent.set__( Rf_eval( call, R_GlobalEnv ) );
         }
     } ;
+
+	//typedef typename FieldProxyPolicy<CLASS>::FieldProxy FieldProxyType;
 
     class const_FieldProxy : public GenericProxy<const_FieldProxy> {
     public:
