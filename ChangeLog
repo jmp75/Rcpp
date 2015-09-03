@@ -1,3 +1,285 @@
+2015-08-31  Dirk Eddelbuettel  <edd@debian.org>
+
+        * DESCRIPTION (Version, Date): Roll Version and Date
+
+2015-08-30  Dirk Eddelbuettel  <edd@debian.org>
+
+        * vignettes/Rcpp.bib: Updated RcppGSL entry
+
+2015-08-29  Dirk Eddelbuettel  <edd@debian.org>
+
+        * vignettes/Rcpp.bib: Add RcppZiggurat entry
+
+        * inst/include/Rcpp/utils/tinyformat.h: Updated to current upstream
+        version keeping our local modifications / adaptations (PR #357)
+
+2015-08-29  Qiang Kou <qkou@umail.iu.edu>
+
+        * inst/include/Rcpp/vector/Subsetter.h: Enable logical subsetting on
+        both LHS and RHS, eg 'a[b > 3] = b[b > 3]' (pull request #352 addressing
+        issue #345)
+        * inst/unitTests/cpp/Subset.cpp: Ditto
+        * inst/unitTests/runit.subset.R: Unit tests for above
+
+2015-08-26  Dirk Eddelbuettel  <edd@debian.org>
+
+        * inst/unitTests/testRcppClass/src/rcpp_module.cpp: Renamed Module
+        'World' to 'RcppClassWorld' to avoid multiple modules with same name
+        (pull request #351, fixed issue #350)
+
+        * inst/unitTests/testRcppClass/man/Rcpp_class_examples.Rd: Ditto
+        * inst/unitTests/testRcppClass/R/load.R: Ditto
+        * inst/unitTests/testRcppClass/NAMESPACE: Ditto
+        * inst/unitTests/runit.Module.client.package.R: Re-enable test
+
+        * inst/unitTests/testRcppModule/src/rcpp_module.cpp: Renamed Module
+        'World' to 'RcppModuleWorld' to avoid multiple modules with same name
+
+        * inst/unitTests/cpp/modref.cpp: Rename 'World' to 'ModRefWorld'
+        * inst/unitTests/runit.modref.R (test.modRef): Ditto
+
+        * inst/unitTests/cpp/Module.cpp: Rename 'World' to 'ModuleWorld'
+        * inst/unitTests/runit.Module.R (test.Module): Ditto
+
+2015-08-25  Kurt Hornik  <Kurt.Hornik@wu.ac.at>
+
+        * R/loadModule.R: For now=TRUE, always set .botched to FALSE which
+        corresponds to the case of the methods package being in the search path
+        * inst/include/Rcpp/Reference.h: Call call with the internal Namespace
+
+2015-08-24  Dirk Eddelbuettel  <edd@debian.org>
+
+        * vignettes/Rcpp.bib: Updated R / R Core references
+
+2015-08-23  Romain Francois <romain@r-enthusiasts.com>
+
+        * inst/include/Rcpp/Benchmark/Timer.h: Silence 'g++ -pedantic' by
+        replaceing one R_xlen_t by size_t (pull request #348)
+
+2015-08-19  Florian Plaza Onate <florian.plaza@jouy.inra.fr>
+        * inst/include/Rcpp/vector/Vector.h: Add 'at' methods which implement
+        accessors with bounds cheking (pull request #342, fixes issue #341)
+        * inst/include/Rcpp/vector/Matrix.h: Ditto
+        * inst/unitTests/cpp/Vector.cpp: Add unit tests for at acessors
+        * inst/unitTests/cpp/Matrix.cpp: Ditto
+        * inst/unitTests/runit.Vector.R: Ditto
+        * inst/unitTests/runit.Matrix.R: Ditto
+
+2015-08-18  Dirk Eddelbuettel  <edd@debian.org>
+
+        * inst/unitTests/runit.Module.client.package.R: Disabled for bad
+        interaction of Rcpp Modules and R 3.2.2
+
+2015-08-15  Florian Plaza Onate <florian.plaza@jouy.inra.fr>
+
+        * inst/include/Rcpp/vector/converter.h: Correct conversion from const
+        char argument (pull request #344, fixes issue #343)
+
+2015-08-14  Florian Plaza Onate <florian.plaza@jouy.inra.fr>
+
+        * inst/include/Rcpp/vector/DimNameProxy.h: Add assignment operator,
+        refactor code, update error message formatting (pull request #339)
+
+2015-08-05  Kevin Ushey  <kevinushey@gmail.com>
+
+        * src/api.cpp: use `_WIN32` instead of `WIN32`
+
+2015-08-02  Dirk Eddelbuettel  <edd@debian.org>
+
+        * R/Attributes.R (sourceCpp): In no-rebuild-needed case, also set a
+        default directory restoration via on.exit() (pull request #335,
+        addressing issue #309)
+
+2015-07-24  Dirk Eddelbuettel  <edd@debian.org>
+
+        * DESCRIPTION: Release 0.12.0
+        * inst/NEWS.Rd: Release 0.12.0
+	* vignettes/Rcpp.bib: Release 0.12.0
+        * inst/include/Rcpp/config.h: Release 0.12.0
+
+        * debian/*: Changes for Debian release of 0.12.0
+
+2015-07-23  Dirk Eddelbuettel  <edd@debian.org>
+
+        * inst/include/Rcpp/Symbol.h: Use Rf_installChar(x) instead of
+        Rf_install(CHAR(X)) if R 3.2.0 or later is used
+
+2015-07-07  Qiang Kou <qkou@umaikl.iu.edu>
+
+        * src/include/Rcpp/String.h: Ensure proper initialization of String
+        objects from two constructors
+        * inst/unitTests/cpp/String.cpp: New unit test
+        * inst/unitTests/runit.String.R: Ditto
+
+2015-07-21  Kevin Ushey  <kevinushey@gmail.com>
+
+        * inst/include/Rcpp/api/meat/Rcpp_eval.h: don't use 'CDDDR'
+
+2015-07-20  Dirk Eddelbuettel  <edd@debian.org>
+
+        * DESCRIPTION: Rolled minor Date and Version
+
+        * R/Attributes.R: Use explicit 'utils::assignInMyNamespace'
+
+        * R/Rcpp.package.skeleton.R: Use explicit 'utils::package.skeleton'
+
+2015-07-17  JJ Allaire <jj@rstudio.org>
+
+        * Rcpp.Rproj: don't use devtools mode in RStudio (enables the
+        Test Package command to invoke the RUnit based test-suite)
+        * src/attributes.cpp: Correctly handle signature termination
+        characters ('{' or ';') contained in quotes
+
+2015-07-16  Kevin Ushey  <kevinushey@gmail.com>
+
+        * inst/include/Rcpp/api/meat/Rcpp_eval.h: Don't use 'R_ToplevelExec';
+        ensure Rcpp_eval respects previously established handlers. Capture
+        errors + interrupts with R-level 'tryCatch'.
+        * inst/NEWS.Rd: Add news entry
+
+2015-07-14  JJ Allaire <jj@rstudio.org>
+
+        * src/attributes.cpp: fix crash on second call to sourceCpp
+
+2015-07-07  Qiang Kou <qkou@umaikl.iu.edu>
+
+        * src/include/Rcpp/String.h: Use Rcpp_PreserveObject and
+        Rcpp_ReplaceObject to protect underlying SEXP inside String objects
+
+2015-07-07  Matt P. Dziubinski  <matdzb@gmail.com>
+
+        * inst/include/Rcpp/sugar/functions/var.h: Variance -- changed from
+        the unstable formula back to the stable (two-pass) formula, fixed
+        support for complex numbers (formula correction).
+        * inst/unitTests/runit.sugar.var.R: Added tests for complex variance
+        computation, applied simple code refactoring.
+
+2015-07-04  Dirk Eddelbuettel  <edd@debian.org>
+
+        * vignettes/Rcpp.bib: Updated reference to several CRAN packages
+
+2015-07-02  Kevin Ushey  <kevinushey@gmail.com>
+
+        * .clang_format: Added
+
+2015-06-25  Kevin Ushey  <kevinushey@gmail.com>
+
+	* inst/include/Rcpp/api/meat/Rcpp_eval.h: reset error after Rcpp_eval
+	* inst/unitTests/cpp/Function.cpp: unit tests
+	* inst/unitTests/runit.Function.R: unit tests
+        * inst/include/Rcpp/Function.h: catch empty error messages
+        * inst/include/Rcpp/api/meat/Rcpp_eval.h: protect call
+
+2015-06-24  Qiang Kou <qkou@umaikl.iu.edu>
+
+        * inst/include/Rcpp/String.h: Support encodings
+        * src/String.cpp: Ditto
+        * inst/unitTests/runit.String.R: Add unit tests
+
+2015-06-18  Dirk Eddelbuettel  <edd@debian.org>
+
+        * R/Attributes.R (evalCpp): Add support for plugings argument
+        * man/evalCpp.Rd: Document argument
+
+2015-06-07  JJ Allaire <jj@rstudio.org>
+
+        * src/attributes.cpp: Don't load sourceCpp dynamic library if it's
+        already been loaded
+
+2015-06-05  Dirk Eddelbuettel  <edd@debian.org>
+
+        * R/Rcpp.package.skeleton.R (Rcpp.package.skeleton): Remove
+        `character.only=TRUE` from `requireNamespace()` as it happens to flip
+        the boolean value too
+
+2015-06-03  Qiang Kou <qkou@umaikl.iu.edu>
+
+        * inst/include/Rcpp/*: Finish changing R_len_t to R_xlen_t
+        * src/*: Ditto
+
+2014-05-27  Romain Francois  <romain@r-enthusiasts.com>
+
+        * inst/include/Rcpp/DataFrame.h: Safe DataFram constructor
+
+2015-05-16  Qiang Kou <qkou@umaikl.iu.edu>
+
+        * inst/include/Rcpp/*: Begin changing R_len_t to R_xlen_t
+        * src/*: Ditto
+
+2015-05-17  Matt P. Dziubinski  <matdzb@gmail.com>
+
+        * inst/include/Rcpp/platform/compiler.h: Added RCPP_USING_CXX0X_OR_LATER
+        * inst/include/Rcpp/sugar/functions/sapply.h: Updated to support lambda functions
+
+2015-05-01  Kevin Ushey  <kevinushey@gmail.com>
+
+        * vignettes/Rcpp-FAQ.Rnw: Notes on installing gfortran
+
+2015-05-01  Dirk Eddelbuettel  <edd@debian.org>
+
+        * DESCRIPTION: Release 0.11.6
+        * inst/NEWS.Rd: Release 0.11.6
+        * inst/include/Rcpp/config.h: Release 0.11.6
+
+        * debian/*: Changes for Debian release of 0.11.6
+
+2015-04-27  JJ Allaire  <jj@rstudio.org>
+
+        * src/Module.cpp: Revert parts of PR291 pertaining to Modules and {BEGIN/END}_RCPP
+        * inst/include/Rcpp/api/meat/module/Module.h: Ditto
+        * inst/include/Rcpp/InternalFunctionWithStdFunction.h: Ditto
+        * inst/include/Rcpp/module/Module_generated_CppFunction.h: Ditto
+        * inst/include/Rcpp/module/class.h: Ditto
+
+2014-04-25  Romain Francois  <romain@r-enthusiasts.com>
+
+        * inst/include/Rcpp/vector/Vector.h: update the parameterization of Vector cache
+        * inst/include/Rcpp/vector/traits.h: ...
+        * inst/include/Rcpp/vector/00_forward_proxy.h: ...
+        * inst/unitTests/runit.Vector.R: test for above changes
+        * inst/unitTests/cpp/Vector.cpp: ...
+
+2015-04-22  Kevin Ushey  <kevinushey@gmail.com>
+
+        * inst/include/Rcpp/utils/tinyformat.h: don't use C++11 features
+
+2015-04-14  Dirk Eddelbuettel  <edd@debian.org>
+
+        * .travis.yml (sudo): Adding 'sudo: required' to force older Travis backend
+
+2014-04-14  Romain Francois  <romain@r-enthusiasts.com>
+
+        * inst/include/Rcpp/api/meat/is.h: added is__simple<Rcomplex>
+        * inst/include/Rcpp/config.h: not using floating point arithmetic in preprocessor
+
+2015-04-12  Dirk Eddelbuettel  <edd@debian.org>
+
+        * vignettes/Rcpp-FAQ.Rnw: Also load Rcpp to make cppFunction visible
+
+2014-04-11  Romain Francois  <romain@r-enthusiasts.com>
+
+        * inst/include/Rcpp/macros/macros.h: Reworked BEGIN_RCPP and END_RCPP
+        * inst/include/Rcpp/*: Removed BEGIN_RCPP and END_RCPP from a few files
+        * src/Module.cpp: But added here
+
+2015-04-19  Jonathan Marshall <jmarshall@xbmc.org>
+
+        * inst/include/Rcpp/vector/string_proxy.h: Adds empty() constructor
+        * inst/include/Rcpp/vector/const_string_proxy.h: Ditto
+
+2015-03-18  Dmitrii Meleshko  <Dmitrii@MeleshkoDima.none>
+
+        * inst/include/Rcpp/vector/Matrix.h: Added default ctor for 0x0 matrix
+
+2015-03-18  JJ Allaire  <jj@rstudio.org>
+
+        * R/Attributes.R:  Revert to use of gcc 4.6.3 with Rtools 3.3
+
+2015-03-16  JJ Allaire  <jj@rstudio.org>
+
+        * src/attributes.cpp: Fix failing local include test (normalize path of
+        base source file so comparisons work on Windows).
+
 2015-03-15  Dirk Eddelbuettel  <edd@debian.org>
 
         * R/Attributes.R (.rtoolsPath): Replace trimws() use with a local variant
@@ -5,6 +287,11 @@
 2015-03-11  JJ Allaire  <jj@rstudio.org>
 
         * R/Attributes.R:  Rtools 3.3 is now located and used for compilation under R 3.2.
+
+2015-03-11  Kevin Ushey  <kevinushey@gmail.com>
+
+        * inst/include/RcppCommon.h: Move headers into major/minor protection
+        * inst/include/Rcpp/r/headers.h: New file
 
 2015-03-04  Dirk Eddelbuettel  <edd@debian.org>
 

@@ -1,7 +1,7 @@
 #!/usr/bin/r -t
 #       hey emacs, please make this use  -*- tab-width: 4 -*-
 #
-# Copyright (C) 2010 - 2014  Dirk Eddelbuettel and Romain Francois
+# Copyright (C) 2010 - 2015  Dirk Eddelbuettel and Romain Francois
 #
 # This file is part of Rcpp.
 #
@@ -674,5 +674,21 @@ if (.runThisTest) {
         checkIdentical(logical_vector_from_bool_assign(), TRUE)
     }
     
+    test.noprotect_vector <- function(){
+        x <- rnorm(10)
+        checkIdentical( noprotect_vector(x), 10L )
+    }
+    
+    test.noprotect_matrix <- function(){
+        x <- matrix(rnorm(10), nrow=2)
+        checkIdentical( noprotect_matrix(x), 2L )
+    }
+
+    test.IntegerVector.accessor.with.bounds.checking <- function() {
+        x <- seq(1L, 5L, by=1L)
+        checkEquals(vec_access_with_bounds_checking(x, 3), 4)
+        checkException(vec_access_with_bounds_checking(x, 5) , msg = "index out of bounds not detected" )
+        checkException(vec_access_with_bounds_checking(x, -1) , msg = "index out of bounds not detected" )
+    }
 }
 

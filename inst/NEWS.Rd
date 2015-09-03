@@ -2,11 +2,93 @@
 \title{News for Package 'Rcpp'}
 \newcommand{\cpkg}{\href{http://CRAN.R-project.org/package=#1}{\pkg{#1}}}
 
-\section{Changes in Rcpp version 0.11.6 (Unreleased)}{
+\section{Changes in Rcpp version 0.12.1 (2015-xx-yy)}{
   \itemize{
+    \item Changes in Rcpp API:
+    \itemize{
+      \item Correct use of WIN32 instead of _WIN32 to please Windows 10
+      \item Add an assignment operator to \code{DimNameProxy} (PR #339 by Florian)
+      \item Add vector and matrix accessors \code{.at()} with bounds checking
+      (PR #342 by Florian) 
+      \item Correct character vector conversion from single char (PR #344 by
+      Florian fixing issue #343)
+      \item Correct on use of \code{R_xlen_t} back to \code{size_t} (PR #348 by Romain)
+    }
     \item Changes in Rcpp Attributes:
     \itemize{
-        \item Rtools 3.3 is now supported.
+      \item Correctly reset directory in case of no-rebuilding but Windows code
+      (PR #335)
+    }
+    \item Changes in Rcpp Modules:
+    \itemize{
+      \item We no longer define multiple Modules objects named \code{World} in
+      the unit tests with was seen to have a bad effect with R 3.2.2 or later.
+      \item Applied patch by Kurt Hornik which improves how Rcpp loads Modules
+    }
+  }
+}
+
+\section{Changes in Rcpp version 0.12.0 (2015-07-24)}{
+  \itemize{
+    \item Changes in Rcpp API:
+    \itemize{
+      \item \code{Rcpp_eval()} no longer uses \code{R_ToplevelExec} when evaluating
+      R expressions; this should resolve errors where calling handlers (e.g.
+      through \code{suppressMessages()}) were not properly respected.
+      \item All internal length variables have been changed from \code{R_len_t}
+      to \code{R_xlen_t} to support vectors longer than 2^31-1 elements (via 
+      pull request 303 by Qiang Kou).
+      \item The sugar function \code{sapply} now supports lambda functions
+      (addressing issue 213 thanks to Matt Dziubinski)
+      \item The \code{var} sugar function now uses a more robust two-pass
+      method, supports complex numbers, with new unit tests added (via pull
+      request 320 by Matt Dziubinski) 
+      \item \code{String} constructors now allow encodings (via pull request 310
+      by Qiang Kou)
+      \item \code{String} objects are preserving the underlying \code{SEXP}
+      objects better, and are more careful about initializations (via pull
+      requests 322 and 329 by Qiang Kou)
+      \item DataFrame constructors are now a little more careful (via pull
+      request 301 by Romain Francois)
+      \item For R 3.2.0 or newer, \code{Rf_installChar()} is used instead of
+      \code{Rf_install(CHAR())} (via pull request 332). 
+    }
+    \item Changes in Rcpp Attributes:
+    \itemize{
+      \item Use more robust method of ensuring unique paths for generated shared
+      libraries.
+      \item The \code{evalCpp} function now also supports the \code{plugins}
+      argument.
+      \item Correctly handle signature termination characters ('\{' or ';') contained
+      in quotes.
+    }
+    \item Changes in Rcpp Documentation:
+    \itemize{
+      \item The \code{Rcpp-FAQ} vignette was once again updated with respect to
+      OS X issues and Fortran libraries needed for e.g. \cpkg{RcppArmadillo}.
+      \item The included \code{Rcpp.bib} bibtex file (which is also used by
+      other Rcpp* packages) was updated with respect to its CRAN references.
+    }
+  }
+}
+
+\section{Changes in Rcpp version 0.11.6 (2015-05-01)}{
+  \itemize{
+    \item Changes in Rcpp API:
+    \itemize{
+      \item The unwinding of exceptions was refined to protect against inadvertent
+      memory leaks.
+      \item Header files now try even harder not to let macro definitions leak.
+      \item Matrices have a new default constructor for zero-by-zero dimension
+      matrices (via a pull request by Dmitrii Meleshko).
+      \item A new \code{empty()} string constructor was added (via another pull
+      request).
+      \item Better support for Vectors with a storage policy different from the 
+      default, i.e. \code{NoProtectStorage}, was added.
+    }
+    \item Changes in Rcpp Attributes:
+    \itemize{
+      \item Rtools 3.3 is now supported.
     }
   }
 }
