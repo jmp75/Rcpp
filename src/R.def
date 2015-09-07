@@ -83,3 +83,12 @@ Rf_defineVar
 Rf_inherits
 Rf_lcons
 R_GetCCallable
+Rf_findFun
+Rf_lang4
+Rf_xlength
+R_BaseNamespace
+R_finite
+Rf_fround
+R_NaReal
+R_NaInt
+Rf_ScalarReal
