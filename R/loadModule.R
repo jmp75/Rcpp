@@ -46,7 +46,7 @@ moduleIsLoaded <- function(name, env)
     exists(.moduleMetaName(name), envir = env, inherits = FALSE)
 
 loadModule <- function( module, what = character(), loadNow,
-                      env = topenv(parent.frame())) {
+                      env = topenv(parent.frame()), PACKAGE = methods::getPackageName(env)) {
 
     if(is(module, "character")) {
         loadM <- NULL
@@ -62,14 +62,14 @@ loadModule <- function( module, what = character(), loadNow,
         stop(gettextf("Argument \"module\" should be a module or the name of a module: got an object of class \"%s\"", class(module)))
     if(missing(loadNow)) { # test it
         if(is.null(loadM))
-            loadM <- tryCatch(Module( module, mustStart = TRUE, where = env ),
+            loadM <- tryCatch(Module( module, mustStart = TRUE, where = env, PACKAGE = PACKAGE),
                            error = function(e)e)
         loadNow <- !is(loadM, "error")
     }
     if(loadNow) {
         .botched <- isBotchedSession()
         if(is.null(loadM))
-            loadM <- tryCatch(Module( module, mustStart = TRUE, where = env ),
+            loadM <- tryCatch(Module( module, mustStart = TRUE, where = env, PACKAGE = PACKAGE),
                               error = function(e)e)
         if(is(loadM, "error")) {
             if(.botched)
