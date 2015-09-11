@@ -40,7 +40,7 @@
 #endif
 
 #ifdef _MSC_VER
-#if (_MSC_VER == 1800) // Visual Studio 2013
+#if (_MSC_VER >= 1800) // Visual Studio 2013
 #define GOOD_COMPILER_FOR_RCPP
 
 // Credits and source for the snprintf emulation:
