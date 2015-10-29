@@ -1,3 +1,24 @@
+2015-10-08  Tianqi Chen <tianqi.tchen@gmail.com>
+
+        * inst/include/Rcpp/api/meat/is.h: Enhance the check for Rcpp Module
+        objects (PR #381 fixing #380)
+
+2015-10-01  JJ Allaire <jj@rstudio.org>
+
+        * src/attributes.cpp: Enable export of C++ interface for functions that
+        return void
+
+2015-09-28  Dirk Eddelbuettel  <edd@debian.org>
+
+        * inst/NEWS.Rd: GitHub pull requests and issues are now linked
+
+        * src/barrier.cpp: Use SET_STRING_ELT() on LHS (with thanks to Luke)
+
+2015-09-21  Dirk Eddelbuettel  <edd@debian.org>
+
+        * inst/include/Rcpp/String.h: Before assigning ensure we received
+        exactly one string argument
+
 2015-09-10  Dirk Eddelbuettel  <edd@debian.org>
 
         * DESCRIPTION: Release 0.12.1
