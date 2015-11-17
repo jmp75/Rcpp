@@ -1,3 +1,65 @@
+2015-11-14  Dirk Eddelbuettel  <edd@debian.org>
+
+        * DESCRIPTION: Release 0.12.2
+        * inst/NEWS.Rd: Release 0.12.2
+	* vignettes/Rcpp.bib: Release 0.12.2
+        * inst/include/Rcpp/config.h: Release 0.12.2
+
+        * debian/*: Changes for Debian release of 0.12.2
+
+	* vignettes/Rcpp.bib: Updated all CRAN reference to current versions
+
+2015-11-13  Dirk Eddelbuettel  <edd@debian.org>
+
+        * inst/include/Rcpp/complex.h: Define a header guard for dplyr to
+        prevent errorneous redefinition of operator<<() via dplyr
+
+2015-11-11  Dirk Eddelbuettel  <edd@debian.org>
+
+        * inst/include/Rcpp/vector/Matrix.h: Further simplification
+
+2015-11-11  Qiang Kou <qkou@umail.iu.edu>
+
+        * include/Rcpp/complex.h: operator<< for Rcomplex
+
+2015-11-10  Dirk Eddelbuettel  <edd@debian.org>
+
+        * inst/include/Rcpp/vector/Matrix.h: Added transpose for character
+        matrices as well
+
+        * inst/unitTests/runit.Matrix.R: New unit tests
+        * inst/unitTests/cpp/Matrix.cpp: Ditto
+
+2015-11-08  Dirk Eddelbuettel  <edd@debian.org>
+
+        * inst/include/Rcpp/vector/Matrix.h: Matrix transpose is now a free
+        function for both INTSXP and REALSXP
+
+        * inst/unitTests/runit.Matrix.R: New unit tests
+        * inst/unitTests/cpp/Matrix.cpp: Ditto
+
+2015-11-08  Daniel C. Dillon  <dcdillon@gmail.com>
+
+        * inst/include/Rcpp/Nullable.h: No longer prevent assignment of
+        R_NilValue to Nullable<> in function signatures
+
+        * inst/include/Rcpp/vector/Matrix.h: Use showpoint in operator<<()
+
+2015-11-07  Dirk Eddelbuettel  <edd@debian.org>
+
+        * inst/include/Rcpp/vector/Matrix.h: Beginnings of a Matrix transpose
+
+2015-11-06  Kevin Ushey <kevinushey@gmailcom>
+
+        * inst/include/Rcpp/vector/Subsetter.h: Add sugar math operators
+        * inst/unitTests/runit.subset.R: Unit tests
+        * inst/unitTests/cpp/Subset.cpp: Unit tests
+        * inst/NEWS.Rd: NEWS entry
+
+2015-11-01  Qiang Kou <qkou@umail.iu.edu>
+
+        * inst/include/Rcpp/vector/MatrixColumn.h: Fix overflow
+
 2015-11-01  Dirk Eddelbuettel  <edd@debian.org>
 
         * DESCRIPTION: Roll Version: to 0.12.1.4

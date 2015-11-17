@@ -3,16 +3,29 @@
 \newcommand{\ghpr}{\href{https://github.com/RcppCore/Rcpp/pull/#1}{##1}}
 \newcommand{\ghit}{\href{https://github.com/RcppCore/Rcpp/issues/#1}{##1}}
 
-\section{Changes in Rcpp version 0.12.2 (expected 2015-11-01 or later)}{
+\section{Changes in Rcpp version 0.12.2 (2015-11-14)}{
   \itemize{
     \item Changes in Rcpp API:
     \itemize{
+      \item Correct return type in product of matrix dimensions (PR \ghpr{374}
+      by Florian)
       \item Before creating a single String object from a \code{SEXP}, ensure
-      that it is from a vector of length one (PR \ghpr{376} fixing \ghit{375}).
-      \item No longer use \code{STRING_ELT} as left-hand side, thanks to a
-      heads-up by Luke Tierney (PR \ghpr{378} fixing \ghit{377}).
+      that it is from a vector of length one (PR \ghpr{376} by Dirk, fixing
+      \ghit{375}). 
+      \item No longer use \code{STRING_ELT} as a left-hand side, thanks to a
+      heads-up by Luke Tierney (PR \ghpr{378} by Dirk, fixing \ghit{377}).
       \item Rcpp Module objects are now checked more carefully (PR \ghpr{381}
       by Tianqi, fixing \ghit{380})
+      \item An overflow in Matrix column indexing was corrected (PR \ghpr{390}
+      by Qiang, fixing a bug reported by Allessandro on the list)
+      \item \code{Nullable} types can now be assigned \code{R_NilValue} in
+      function signatures. (PR \ghpr{395} by Dan, fixing issue \ghit{394})
+      \item \code{operator<<()} now always shows decimal points (PR \ghpr{396}
+      by Dan)
+      \item Matrix classes now have a \code{transpose()} function (PR \ghpr{397}
+      by Dirk fixing \ghit{383}) 
+      \item \code{operator<<()} for complex types was added (PRs \ghpr{398} by
+      Qiang and \ghpr{399} by Dirk, fixing \ghit{187})
     }
     \item Changes in Rcpp Attributes:
     \itemize{
@@ -22,11 +35,14 @@
     \itemize{
       \item Added new Sugar function \code{cummin()}, \code{cummax()},
       \code{cumprod()} (PR \ghpr{389} by Nathan Russell fixing \ghit{388})
+      \item Enabled sugar math operations for subsets; e.g. x[y] + x[z].
+      (PR \ghpr{393} by Kevin and Qiang, implementing \ghit{392})
     }
     \item Changes in Rcpp Documentation:
     \itemize{
       \item The \code{NEWS} file now links to GitHub issue tickets and pull
       requests. 
+      \item The \code{Rcpp.bib} file with bibliographic references was updated.
     }
   }
 }
