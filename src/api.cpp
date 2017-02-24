@@ -1,9 +1,8 @@
 // -*- mode: C++; c-indent-level: 4; c-basic-offset: 4; indent-tabs-mode: nil; -*-
-// jedit: :folding=explicit:
 //
 // api.cpp: Rcpp R/C++ interface class library -- Rcpp api
 //
-// Copyright (C) 2012 - 2015  Dirk Eddelbuettel and Romain Francois
+// Copyright (C) 2012 - 2016  Dirk Eddelbuettel and Romain Francois
 //
 // This file is part of Rcpp.
 //
@@ -33,23 +32,31 @@ using namespace Rcpp;
 #include <cxxabi.h>
 #endif
 
-#if defined(__GNUC__)
-    #if defined(_WIN32) || defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__CYGWIN__) || defined(__sun) || defined(_AIX)
+#if defined(__GNUC__) || defined(__clang__)
+    #if defined(_WIN32) || defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__CYGWIN__) || defined(__sun) || defined(_AIX) || defined(__MUSL__)
         // do nothing
     #else
         #include <execinfo.h>
 
+        // Extract mangled name e.g. ./test(baz+0x14)[0x400962]
         static std::string demangler_one(const char* input) {
             static std::string buffer;
             buffer = input;
-            buffer.resize(buffer.find_last_of('+') - 1);
-            buffer.erase(
-                buffer.begin(),
-                buffer.begin() + buffer.find_last_of(' ') + 1
-            );
-            return demangle(buffer);
+            size_t last_open = buffer.find_last_of('(');
+            size_t last_close = buffer.find_last_of(')');
+            if (last_open == std::string::npos ||
+                last_close == std::string::npos) {
+              return input;     // #nocov
+            }
+            std::string function_name = buffer.substr(last_open + 1, last_close - last_open - 1);
+            // Strip the +0x14 (if it exists, which it does not in earlier versions of gcc)
+            size_t function_plus = function_name.find_last_of('+');
+            if (function_plus != std::string::npos) {
+              function_name.resize(function_plus);
+            }
+            buffer.replace(last_open + 1, function_name.size(), demangle(function_name));
+            return buffer;
         }
-
     #endif
 #endif
 
@@ -84,7 +91,7 @@ namespace Rcpp {
     }
 
     // [[Rcpp::register]]
-    const char * type2name(SEXP x) {
+    const char * type2name(SEXP x) { 			// #nocov start
         switch (TYPEOF(x)) {
         case NILSXP:	return "NILSXP";
         case SYMSXP:	return "SYMSXP";
@@ -113,7 +120,7 @@ namespace Rcpp {
         default:
         return "<unknown>";
         }
-    }
+    }							// #nocov end
 
 
 } // namespace Rcpp
@@ -138,26 +145,26 @@ std::string demangle(const std::string& name) {
 }
 
 // [[Rcpp::register]]
-const char* short_file_name(const char* file) {
+const char* short_file_name(const char* file) {		// #nocov start
     std::string f(file);
     size_t index = f.find("/include/");
     if (index != std::string::npos) {
         f = f.substr(index + 9);
     }
     return f.c_str();
-}
+}							// #nocov end
 
 // [[Rcpp::internal]]
-SEXP as_character_externalptr(SEXP xp) {
+SEXP as_character_externalptr(SEXP xp) {		// #nocov start
     char buffer[20];
     snprintf(buffer, 20, "%p", (void*)EXTPTR_PTR(xp));
     return Rcpp::wrap((const char*)buffer);
-}
+}							// #nocov end
 
 // [[Rcpp::internal]]
 SEXP rcpp_capabilities() {
-    Shield<SEXP> cap(Rf_allocVector(LGLSXP, 12));
-    Shield<SEXP> names(Rf_allocVector(STRSXP, 12));
+    Shield<SEXP> cap(Rf_allocVector(LGLSXP, 13));
+    Shield<SEXP> names(Rf_allocVector(STRSXP, 13));
     #ifdef HAS_VARIADIC_TEMPLATES
         LOGICAL(cap)[0] = TRUE;
     #else
@@ -217,6 +224,13 @@ SEXP rcpp_capabilities() {
       LOGICAL(cap)[11] = FALSE;
     #endif
 
+    #ifdef RCPP_NEW_DATE_DATETIME_VECTORS
+      LOGICAL(cap)[12] = TRUE;
+    #else
+      LOGICAL(cap)[12] = FALSE;
+    #endif
+
+
     SET_STRING_ELT(names, 0, Rf_mkChar("variadic templates"));
     SET_STRING_ELT(names, 1, Rf_mkChar("initializer lists"));
     SET_STRING_ELT(names, 2, Rf_mkChar("exception handling"));
@@ -229,35 +243,36 @@ SEXP rcpp_capabilities() {
     SET_STRING_ELT(names, 9, Rf_mkChar("C++0x unordered maps"));
     SET_STRING_ELT(names, 10, Rf_mkChar("C++0x unordered sets"));
     SET_STRING_ELT(names, 11, Rf_mkChar("Full C++11 support"));
+    SET_STRING_ELT(names, 12, Rf_mkChar("new date(time) vectors"));
     Rf_setAttrib(cap, R_NamesSymbol, names);
     return cap;
 }
 
 
 // [[Rcpp::internal]]
-SEXP rcpp_can_use_cxx0x() {
+SEXP rcpp_can_use_cxx0x() {				// #nocov start
     #if defined(HAS_VARIADIC_TEMPLATES) || defined(RCPP_USING_CXX11)
         return Rf_ScalarLogical(TRUE);
     #else
         return Rf_ScalarLogical(FALSE);
     #endif
-}
+}							// #nocov end
 
 
 // [[Rcpp::internal]]
-SEXP rcpp_can_use_cxx11() {
+SEXP rcpp_can_use_cxx11() {				// #nocov start
     #if defined(RCPP_USING_CXX11)
         return Rf_ScalarLogical(TRUE);
     #else
         return Rf_ScalarLogical(FALSE);
     #endif
-}
+}							// #nocov end
 
 
 // [[Rcpp::register]]
 SEXP stack_trace(const char* file, int line) {
-    #if defined(__GNUC__)
-        #if defined(_WIN32) || defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__CYGWIN__) || defined(__sun) || defined(_AIX)
+    #if defined(__GNUC__) || defined(__clang__)
+        #if defined(_WIN32) || defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__CYGWIN__) || defined(__sun) || defined(_AIX) || defined(__MUSL__)
             // Simpler version for Windows and *BSD
             List trace = List::create(_["file"] = file,
                                       _[ "line"  ] = line,

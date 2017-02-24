@@ -28,23 +28,25 @@
 #include <algorithm>
 #include <Rcpp/protection/Shield.h>
 
+namespace Rcpp { SEXP Rcpp_eval(SEXP, SEXP); }
+
 // [[Rcpp::register]]
-SEXP get_string_elt(SEXP x, int i) {
+SEXP get_string_elt(SEXP x, R_xlen_t i) {
     return STRING_ELT(x, i);
 }
 
 // [[Rcpp::register]]
-const char* char_get_string_elt(SEXP x, int i) {
+const char* char_get_string_elt(SEXP x, R_xlen_t i) {
     return CHAR(STRING_ELT(x, i));
 }
 
 // [[Rcpp::register]]
-void set_string_elt(SEXP x, int i, SEXP value) {
+void set_string_elt(SEXP x, R_xlen_t i, SEXP value) {
     SET_STRING_ELT(x, i, value);
 }
 
 // [[Rcpp::register]]
-void char_set_string_elt(SEXP x, int i, const char* value) {
+void char_set_string_elt(SEXP x, R_xlen_t i, const char* value) {
     SET_STRING_ELT(x, i, Rf_mkChar(value));
 }
 
@@ -54,12 +56,12 @@ SEXP* get_string_ptr(SEXP x) {
 }
 
 // [[Rcpp::register]]
-SEXP get_vector_elt(SEXP x, int i) {
+SEXP get_vector_elt(SEXP x, R_xlen_t i) {
     return VECTOR_ELT(x, i);
 }
 
 // [[Rcpp::register]]
-void set_vector_elt(SEXP x, int i, SEXP value) {
+void set_vector_elt(SEXP x, R_xlen_t i, SEXP value) {
     SET_VECTOR_ELT(x, i, value);
 }
 
@@ -95,7 +97,7 @@ SEXP get_rcpp_cache() {
         SEXP getNamespaceSym = Rf_install("getNamespace"); // cannot be gc()'ed  once in symbol table
         Rcpp::Shield<SEXP> RcppString(Rf_mkString("Rcpp"));
         Rcpp::Shield<SEXP> call(Rf_lang2(getNamespaceSym, RcppString));
-        Rcpp::Shield<SEXP> RCPP(Rf_eval(call, R_GlobalEnv));
+        Rcpp::Shield<SEXP> RCPP(Rcpp_eval(call, R_GlobalEnv));
 
         Rcpp_cache = Rf_findVarInFrame(RCPP, Rf_install(".rcpp_cache"));
         Rcpp_cache_know = true;
@@ -137,7 +139,7 @@ SEXP init_Rcpp_cache() {
     SEXP getNamespaceSym = Rf_install("getNamespace"); // cannot be gc()'ed  once in symbol table
     Rcpp::Shield<SEXP> RcppString(Rf_mkString("Rcpp"));
     Rcpp::Shield<SEXP> call(Rf_lang2(getNamespaceSym, RcppString));
-    Rcpp::Shield<SEXP> RCPP(Rf_eval(call, R_GlobalEnv));
+    Rcpp::Shield<SEXP> RCPP(Rcpp_eval(call, R_GlobalEnv));
     Rcpp::Shield<SEXP> cache(Rf_allocVector(VECSXP, RCPP_CACHE_SIZE));
 
     // the Rcpp namespace

@@ -1,4 +1,4 @@
-#!/usr/bin/r -t
+#!/usr/bin/env r
 #
 # Copyright (C) 2010 - 2014  Dirk Eddelbuettel and Romain Francois
 #
@@ -106,6 +106,18 @@ if (.runThisTest) {
         checkEquals( res[["a"]], 200L,  msg = "wrap( tr1::unordered_map<string,int>) " )
         checkEquals( res[["b"]], 100L,  msg = "wrap( tr1::unordered_map<string,int>) " )
         checkEquals( res[["c"]], 300L,  msg = "wrap( tr1::unordered_map<string,int>) " )
+    }
+
+    test.wrap.unordered.map.rcpp.string.int <- function(){
+        res <- unordered_map_rcpp_string_int(c("a", "b", "c"))
+        checkEquals( res[["a"]], 200L,  msg = "wrap( tr1::unordered_map<Rcpp::String,int>) " )
+        checkEquals( res[["b"]], 100L,  msg = "wrap( tr1::unordered_map<Rcpp::String,int>) " )
+        checkEquals( res[["c"]], 300L,  msg = "wrap( tr1::unordered_map<Rcpp::String,int>) " )
+    }
+
+    test.unordered.set.rcpp.string <- function(){
+        checkEquals(unordered_set_rcpp_string(c("a", "b", "c", "b")),
+            c(FALSE, FALSE, FALSE, TRUE), msg = "wrap( tr1::unordered_set<Rcpp::String>) " )
     }
 
     test.wrap.unordered.map.string.double <- function(){

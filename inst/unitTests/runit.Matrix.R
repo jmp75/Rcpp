@@ -1,4 +1,4 @@
-#!/usr/bin/r -t
+#!/usr/bin/env r
 #
 # Copyright (C) 2010 - 2014  Dirk Eddelbuettel, Romain Francois and Kevin Ushey
 #
@@ -94,9 +94,19 @@ if (.runThisTest) {
 	checkEquals( runit_NumericMatrix_row( x ), sum( x[1,] ), msg = "iterating over a row" )
     }
 
+    test.NumericMatrix.row.const <- function(){
+	x <- matrix( 1:16 + .5, ncol = 4 )
+	checkEquals( runit_NumericMatrix_row_const( x ), sum( x[1,] ), msg = "iterating over a row" )
+    }
+
     test.CharacterMatrix.row <- function(){
 	m <- matrix( letters, ncol = 2 )
 	checkEquals( runit_CharacterMatrix_row(m), paste( m[1,], collapse = "" ), msg = "CharacterVector::Row" )
+    }
+
+    test.CharacterMatrix.row.const <- function(){
+	m <- matrix( letters, ncol = 2 )
+	checkEquals( runit_CharacterMatrix_row_const(m), paste( m[1,], collapse = "" ), msg = "CharacterVector::Row" )
     }
 
     test.List.row <- function(){
@@ -105,9 +115,20 @@ if (.runThisTest) {
 	checkEquals( runit_GenericMatrix_row( m ), 1 + 0:3*4, msg = "List::Row" )
     }
 
+    test.List.row.const <- function(){
+	m <- lapply( 1:16, function(i) seq(from=1, to = i ) )
+	dim( m ) <- c( 4, 4 )
+	checkEquals( runit_GenericMatrix_row_const( m ), 1 + 0:3*4, msg = "List::Row" )
+    }
+
     test.NumericMatrix.column <- function(){
 	x <- matrix( 1:16 + .5, ncol = 4 )
 	checkEquals( runit_NumericMatrix_column( x ), sum( x[,1] ) , msg = "iterating over a column" )
+    }
+
+    test.NumericMatrix.column.const <- function(){
+	x <- matrix( 1:16 + .5, ncol = 4 )
+	checkEquals( runit_NumericMatrix_column_const( x ), sum( x[,1] ) , msg = "iterating over a column" )
     }
 
     test.NumericMatrix.cumsum <- function(){
@@ -120,10 +141,21 @@ if (.runThisTest) {
 	checkEquals( runit_CharacterMatrix_column(m), paste( m[,1], collapse = "" ), msg = "CharacterVector::Column" )
     }
 
+    test.CharacterMatrix.column.const <- function(){
+	m <- matrix( letters, ncol = 2 )
+	checkEquals( runit_CharacterMatrix_column_const(m), paste( m[,1], collapse = "" ), msg = "CharacterVector::Column" )
+    }
+
     test.List.column <- function(){
 	m <- lapply( 1:16, function(i) seq(from=1, to = i ) )
 	dim( m ) <- c( 4, 4 )
 	checkEquals( runit_GenericMatrix_column( m ), 1:4, msg = "List::Column" )
+    }
+
+    test.List.column.const <- function(){
+	m <- lapply( 1:16, function(i) seq(from=1, to = i ) )
+	dim( m ) <- c( 4, 4 )
+	checkEquals( runit_GenericMatrix_column_const( m ), 1:4, msg = "List::Column" )
     }
 
     test.NumericMatrix.colsum <- function( ){
@@ -210,4 +242,126 @@ if (.runThisTest) {
         checkEquals(transposeCharacter(M), t(M), msg="character transpose with row and colnames")
     }
     
+    test.Matrix.Scalar.op <- function() {
+        M <- matrix(c(1:12), 3, 4)
+        checkEquals(matrix_scalar_plus(M, 2), M + 2, msg="matrix + scalar")
+        checkEquals(matrix_scalar_plus2(M, 2), 2 + M, msg="scalar + matrix")
+        checkEquals(matrix_scalar_divide(M, 2), M / 2, msg="matrix / scalar")
+        checkEquals(matrix_scalar_divide2(M, 2), 2 / M, msg="scalar / matrix")
+    }
+
+    ## 23 October 2016
+    ## eye function
+    test.Matrix.eye <- function() {
+        
+        checkEquals(
+            dbl_eye(3),
+            diag(1.0, 3, 3),
+            "eye - numeric"
+        )
+        
+        checkEquals(
+            int_eye(3),
+            diag(1L, 3, 3),
+            "eye - integer"
+        )
+        
+        checkEquals(
+            cx_eye(3),
+            diag(1.0 + 0i, 3, 3),
+            "eye - complex"
+        )
+        
+        ## diag(TRUE, 3, 3) was registering as 
+        ## a numeric matrix on Travis for some reason
+        mat <- matrix(FALSE, 3, 3)
+        diag(mat) <- TRUE
+        checkEquals(
+            lgl_eye(3),
+            mat,
+            "eye - logical"
+        )
+    }
+    
+    ## ones function
+    test.Matrix.ones <- function() {
+        
+        checkEquals(
+            dbl_ones(3),
+            matrix(1.0, 3, 3),
+            "ones - numeric"
+        )
+        
+        checkEquals(
+            int_ones(3),
+            matrix(1L, 3, 3),
+            "ones - integer"
+        )
+        
+        checkEquals(
+            cx_ones(3),
+            matrix(1.0 + 0i, 3, 3),
+            "ones - complex"
+        )
+        
+        checkEquals(
+            lgl_ones(3),
+            matrix(TRUE, 3, 3),
+            "ones - logical"
+        )
+    }
+    
+    ## zeros function
+    test.Matrix.zeros <- function() {
+        
+        checkEquals(
+            dbl_zeros(3),
+            matrix(0.0, 3, 3),
+            "zeros - numeric"
+        )
+        
+        checkEquals(
+            int_zeros(3),
+            matrix(0L, 3, 3),
+            "zeros - integer"
+        )
+        
+        checkEquals(
+            cx_zeros(3),
+            matrix(0.0 + 0i, 3, 3),
+            "zeros - complex"
+        )
+        
+        checkEquals(
+            lgl_zeros(3),
+            matrix(FALSE, 3, 3),
+            "zeros - logical"
+        )
+    }
+    
+    
+    test.Matrix.diagfill <- function() {
+        
+        checkEquals(num_diag_fill(diag(1.0, 2, 4), 0.0),
+                    matrix(0.0, 2, 4),
+                    msg = "diagonal fill - case: n < p")
+        
+        checkEquals(num_diag_fill(diag(1.0, 4, 2), 0.0),
+                    matrix(0.0, 4, 2),
+                    msg = "diagonal fill - case: n > p")
+        
+        checkEquals(num_diag_fill(diag(1.0, 3, 3), 0.0),
+                    matrix(0.0, 3, 3),
+                    msg = "diagonal fill - case: n = p")
+        
+        m <- matrix("", 2, 4)
+        diag(m) <- letters[1:2]
+        
+        checkEquals(char_diag_fill(m, ""), 
+                    matrix("", 2, 4),
+                    msg = "diagonal fill - char")
+        
+        
+    }
+
 }

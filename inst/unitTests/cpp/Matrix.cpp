@@ -2,7 +2,7 @@
 //
 // Matrix.cpp: Rcpp R/C++ interface class library -- Matrix unit tests
 //
-// Copyright (C) 2013 - 2014    Dirk Eddelbuettel, Romain Francois and Kevin Ushey
+// Copyright (C) 2013 - 2016  Dirk Eddelbuettel, Romain Francois and Kevin Ushey
 //
 // This file is part of Rcpp.
 //
@@ -100,8 +100,23 @@ double runit_NumericMatrix_row( NumericMatrix m){
 }
 
 // [[Rcpp::export]]
+double runit_NumericMatrix_row_const( const NumericMatrix m){
+    NumericMatrix::ConstRow first_row = m.row(0) ;
+    return std::accumulate( first_row.begin(), first_row.end(), 0.0 ) ;
+}
+
+// [[Rcpp::export]]
 std::string runit_CharacterMatrix_row( CharacterMatrix m ){
     CharacterMatrix::Row first_row = m.row(0) ;
+    std::string res(
+    	std::accumulate(
+    		first_row.begin(), first_row.end(), std::string() ) ) ;
+    return res ;
+}
+
+// [[Rcpp::export]]
+std::string runit_CharacterMatrix_row_const( const CharacterMatrix m ){
+    CharacterMatrix::ConstRow first_row = m.row(0) ;
     std::string res(
     	std::accumulate(
     		first_row.begin(), first_row.end(), std::string() ) ) ;
@@ -120,8 +135,25 @@ IntegerVector runit_GenericMatrix_row( GenericMatrix m ){
 }
 
 // [[Rcpp::export]]
+IntegerVector runit_GenericMatrix_row_const( const GenericMatrix m ){
+    GenericMatrix::ConstRow first_row = m.row(0) ;
+    IntegerVector out( first_row.size() ) ;
+    std::transform(
+    	first_row.begin(), first_row.end(),
+    	out.begin(),
+    	unary_call<SEXP,int>( Function("length" ) ) ) ;
+    return out ;
+}
+
+// [[Rcpp::export]]
 double runit_NumericMatrix_column( NumericMatrix m ){
     NumericMatrix::Column col = m.column(0) ;
+    return std::accumulate( col.begin(), col.end(), 0.0 ) ;
+}
+
+// [[Rcpp::export]]
+double runit_NumericMatrix_column_const( const NumericMatrix m ){
+    NumericMatrix::ConstColumn col = m.column(0) ;
     return std::accumulate( col.begin(), col.end(), 0.0 ) ;
 }
 
@@ -148,8 +180,29 @@ std::string runit_CharacterMatrix_column( CharacterMatrix m){
 }
 
 // [[Rcpp::export]]
+std::string runit_CharacterMatrix_column_const( const CharacterMatrix m){
+    CharacterMatrix::ConstColumn col = m.column(0) ;
+    std::string res(
+        std::accumulate( col.begin(), col.end(), std::string() )
+    ) ;
+    return res ;
+}
+
+// [[Rcpp::export]]
 IntegerVector runit_GenericMatrix_column( GenericMatrix m ){
     GenericMatrix::Column col = m.column(0) ;
+    IntegerVector out( col.size() ) ;
+    std::transform(
+    	   col.begin(), col.end(),
+    	   out.begin(),
+    	   unary_call<SEXP,int>( Function("length" ) )
+    ) ;
+    return wrap(out) ;
+}
+
+// [[Rcpp::export]]
+IntegerVector runit_GenericMatrix_column_const( const GenericMatrix m ){
+    GenericMatrix::ConstColumn col = m.column(0) ;
     IntegerVector out( col.size() ) ;
     std::transform(
     	   col.begin(), col.end(),
@@ -257,4 +310,103 @@ NumericMatrix transposeNumeric(const NumericMatrix & x) {
 // [[Rcpp::export]]
 CharacterMatrix transposeCharacter(const CharacterMatrix & x) {
     return transpose(x);
+}
+
+// [[Rcpp::export]]
+NumericMatrix matrix_scalar_plus(const NumericMatrix & x, double y) {
+    return x + y;
+}
+
+// [[Rcpp::export]]
+NumericMatrix matrix_scalar_plus2(const NumericMatrix & x, double y) {
+    return y + x;
+}
+
+// [[Rcpp::export]]
+NumericMatrix matrix_scalar_divide(const NumericMatrix & x, double y) {
+    return x / y;
+}
+
+// [[Rcpp::export]]
+NumericMatrix matrix_scalar_divide2(const NumericMatrix & x, double y) {
+    return y / x;
+}
+
+// 24 October 2016 
+// eye, ones, and zeros static member functions
+
+// [[Rcpp::export]]
+Rcpp::NumericMatrix dbl_eye(int n) {
+    return Rcpp::NumericMatrix::eye(n);
+}
+
+// [[Rcpp::export]]
+Rcpp::IntegerMatrix int_eye(int n) {
+    return Rcpp::IntegerMatrix::eye(n);
+}
+
+// [[Rcpp::export]]
+Rcpp::ComplexMatrix cx_eye(int n) {
+    return Rcpp::ComplexMatrix::eye(n);
+}
+
+// [[Rcpp::export]]
+Rcpp::LogicalMatrix lgl_eye(int n) {
+    return Rcpp::LogicalMatrix::eye(n);
+}
+
+
+// [[Rcpp::export]]
+Rcpp::NumericMatrix dbl_ones(int n) {
+    return Rcpp::NumericMatrix::ones(n);
+}
+
+// [[Rcpp::export]]
+Rcpp::IntegerMatrix int_ones(int n) {
+    return Rcpp::IntegerMatrix::ones(n);
+}
+
+// [[Rcpp::export]]
+Rcpp::ComplexMatrix cx_ones(int n) {
+    return Rcpp::ComplexMatrix::ones(n);
+}
+
+// [[Rcpp::export]]
+Rcpp::LogicalMatrix lgl_ones(int n) {
+    return Rcpp::LogicalMatrix::ones(n);
+}
+
+
+// [[Rcpp::export]]
+Rcpp::NumericMatrix dbl_zeros(int n) {
+    return Rcpp::NumericMatrix::zeros(n);
+}
+
+// [[Rcpp::export]]
+Rcpp::IntegerMatrix int_zeros(int n) {
+    return Rcpp::IntegerMatrix::zeros(n);
+}
+
+// [[Rcpp::export]]
+Rcpp::ComplexMatrix cx_zeros(int n) {
+    return Rcpp::ComplexMatrix::zeros(n);
+}
+
+// [[Rcpp::export]]
+Rcpp::LogicalMatrix lgl_zeros(int n) {
+    return Rcpp::LogicalMatrix::zeros(n);
+}
+
+// --- Diagonal Fill
+
+// [[Rcpp::export]]
+Rcpp::NumericMatrix num_diag_fill(Rcpp::NumericMatrix x, double diag_val) {
+    x.fill_diag(diag_val);
+    return x;
+}
+
+// [[Rcpp::export]]
+Rcpp::CharacterMatrix char_diag_fill(Rcpp::CharacterMatrix x, std::string diag_val) {
+    x.fill_diag(diag_val);
+    return x;
 }

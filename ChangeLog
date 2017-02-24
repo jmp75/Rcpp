@@ -1,13 +1,1055 @@
+2017-02-17  Dirk Eddelbuettel  <edd@debian.org>
+
+        * R/tools.R: More #nocov
+        * inst/include/Rcpp/internal/r_vector.h: Idem
+
+2017-02-15  Dirk Eddelbuettel  <edd@debian.org>
+
+        * DESCRIPTION (Version, Date): New minor version
+
+2017-02-14  Iñaki Ucar  <i.ucar86@gmail.com>
+
+        * inst/include/Rcpp/iostream/Rstreambuf.h: Fixed single-character handling
+        (pull request #649, fixes issue #647)
+
+2017-02-13  Dirk Eddelbuettel  <edd@debian.org>
+
+        * R/Attributes.R (.plugins[["cpp17"]]): New plugin
+        (.plugins[["cpp1z"]]): Idem
+
+2017-02-04  Daniel C. Dillon  <dcdillon@gmail.com>
+
+        * inst/include/Rcpp/algorithm.h: Improved setup for Intel's icc
+
+2017-01-31  Dirk Eddelbuettel  <edd@debian.org>
+
+        * DESCRIPTION (Date, Version): Roll minor version
+
+        * inst/include/Rcpp/algorithm.h: Allow algorithm.h to be compiler under
+        Intel's compiler, add copyright header and include guard
+
+2017-01-31  Nathan Russell  <russell.nr2012@gmail.com>
+
+        * inst/include/Rcpp/sugar/matrix/upper_tri.h: Inherit from MatrixBase
+        and use correct comparators in get() to fix segfault
+        * inst/include/Rcpp/sugar/matrix/lower_tri.h: Idem
+        * inst/unitTests/cpp/sugar.cpp: Added unit tests for upper_tri and
+        lower_tri
+        * inst/unitTests/runit.sugar.R: Idem
+
+2017-01-23  James J Balamuta  <balamut2@illinois.edu>
+
+        * inst/include/Rcpp/DataFrame.h: Corrected return type for column size.
+
+2017-01-22  Dirk Eddelbuettel  <edd@debian.org>
+
+        * inst/include/Rcpp/DataFrame.h: Simplified and removed deprecation language.
+
+2017-01-21  James J Balamuta  <balamut2@illinois.edu>
+
+        * inst/include/Rcpp/DataFrame.h: Added alias for column and row size
+        * inst/unitTests/runit.DataFrame.R: Added unit tests for aliases
+        * inst/unitTests/cpp/DataFrame.cpp: Idem
+
+2017-01-17  Dirk Eddelbuettel  <edd@debian.org>
+
+        * DESCRIPTION (Version, Date): Roll minor version and Date
+
+        * inst/include/Rcpp/config.h (RCPP_DEV_VERSION): Roll minor
+
+        * src/Date.cpp (Rcpp): Do not access tm_gmtoff on Solaris
+
+2017-01-14  Dirk Eddelbuettel  <edd@debian.org>
+
+        * DESCRIPTION: Release 0.12.9
+        * inst/NEWS.Rd: Release 0.12.9
+        * inst/bib/Rcpp.bib: Release 0.12.9
+        * inst/include/Rcpp/config.h: Release 0.12.9
+
+        * README.md: Updated counts for dependents and tests
+
+        * debian/*: Changes for Debian release of 0.12.9
+
+2017-01-13  Dirk Eddelbuettel  <edd@debian.org>
+
+        * inst/include/Rcpp/exceptions.h: Added more #nocov tags
+        * inst/include/Rcpp/api/bones/wrap_extra_steps.h: Idem
+        * inst/include/Rcpp/iostream/Rstreambuf.h: Idem
+        * inst/include/Rcpp/traits/named_object.h: Idem
+        * inst/include/Rcpp/r_cast.h: Idem
+        * src/Module.cpp: Idem
+
+2017-01-12  Dirk Eddelbuettel  <edd@debian.org>
+
+        * inst/bib/Rcpp.bib: Moved from vignettes/ directory
+        * R/bib.R (bib): Idem
+
+        * vignettes/Rcpp-FAQ.Rnw: Evaluate \Sexpr{Rcpp:::bib()}
+        * vignettes/Rcpp-attributes.Rnw: Idem
+        * vignettes/Rcpp-extending.Rnw: Idem
+        * vignettes/Rcpp-introduction.Rnw: Idem
+        * vignettes/Rcpp-modules.Rnw: Idem
+        * vignettes/Rcpp-packages.Rnw: Idem
+        * vignettes/Rcpp-sugar.Rnw: Idem
+
+        * inst/unitTests/runit.misc.R (test.bib): New test
+
+        * R/exceptions.R: Added #nocov
+
+2017-01-11  Dirk Eddelbuettel  <edd@debian.org>
+
+        * vignettes/Rcpp.bib: Updated references
+
+        * src/attributes.cpp (Rcpp): Correct typos in #nocov tags, added tags
+
+2017-01-07  James J Balamuta  <balamut2@illinois.edu>
+
+        * inst/include/Rcpp/sugar/functions/complex.h: Added Arg() function
+        * inst/unitTests/runit.sugar.R: Added Arg() unit test to complex list
+        * inst/unitTests/cpp/sugar.cpp: Idem
+
+2017-01-06  Dirk Eddelbuettel  <edd@debian.org>
+
+        * DESCRIPTION (Version, Date): Mark new minor version
+
+        * src/attributes.cpp: Additional nocov tags
+
+2017-01-04  Dirk Eddelbuettel  <edd@debian.org>
+
+        * src/Date.cpp (Rcpp): Protect assignment to tm_gmtoff to not being
+        under MinGW; could potentially bite other too-limited systems
+
+        * inst/unitTests/runit.Date.R (test.Datetime.formating): Do not set TZ
+        when running test, only set digits option
+
+2017-01-01  Dirk Eddelbuettel  <edd@debian.org>
+
+        * inst/unitTests/runit.Date.R (test.mktime, test.gmtime): New tests
+        * inst/unitTests/cpp/dates.cpp (test_mktime, test_gmtime): Idem
+
+2016-12-31  Dirk Eddelbuettel  <edd@debian.org>
+
+        * inst/include/Rcpp/vector/Matrix.h: Minor simplification
+
+2016-12-31  James J Balamuta  <balamut2@illinois.edu>
+
+        * inst/include/Rcpp/vector/Matrix.h: Fixed non-symmetric case of matrix
+        fills by switching to a loop based solution from iterator.
+        * inst/unitTests/runit.Matrix.R: Added unit tests for diagonally
+        filling matrices.
+        * inst/unitTests/cpp/Matrix.cpp: Idem
+
+2016-12-30  Dirk Eddelbuettel  <edd@debian.org>
+
+        * src/Date.cpp: Synchronized internal code with R
+
+        * inst/unitTests/cpp/dates.cpp (gmtime_mktime): New test
+        * inst/unitTests/runit.Date.R (test.mktime_gmtime): Idem
+
+2016-12-26  Dirk Eddelbuettel  <edd@debian.org>
+
+        * R/Attributes.R: Added #nocov markers
+        * R/Module.R: Idem
+        * R/exposeClass.R: Idem, added copyright header
+
+2016-12-25  Dirk Eddelbuettel  <edd@debian.org>
+
+        * DESCRIPTION (Date, Version): Roll minor version
+
+        * src/api.cpp: Added #nocov markers
+        * src/Rcpp_init.cpp: Idem
+        * src/Date.cpp: Date
+
+2016-12-14  Nathan Russell  <russell.nr2012@gmail.com>
+
+        * inst/include/Rcpp/sugar/functions/sample.h: Use vector instead of
+        manual memory management.
+
+2016-12-13  Nathan Russell  <russell.nr2012@gmail.com>
+
+        * inst/include/Rcpp/sugar/functions/sample.h: Use malloc.h instead of
+        alloca.h when building on Windows
+        * inst/include/Rcpp/date_datetime/Date.h: Include time.h when building
+        on Windows
+        * inst/include/Rcpp/date_datetime/Datetime.h: Idem
+
+2016-12-12  Dirk Eddelbuettel  <edd@debian.org>
+
+        * inst/include/Rcpp/sugar/functions/sample.h: In case sample.h from the
+        RcppArmadillo extensions was included, skip this file
+
+2016-12-10  Nathan Russell  <russell.nr2012@gmail.com>
+
+        * inst/include/Rcpp/sugar/functions/sample.h: New function
+        sample()
+        * inst/include/Rcpp/sugar/functions/functions.h: Idem
+        * inst/unitTests/cpp/sugar.cpp: Unit tests for sample()
+        * inst/unitTests/runit.sugar.R: Idem
+
+2016-12-10  Dirk Eddelbuettel  <edd@debian.org>
+
+        * R/loadRcppModules.R: Added #nocov tags
+        * R/loadModule.R: Ditto
+
+        * R/unit.tests.R (test): Adjusted one #nocov tag
+
+2016-12-09  Dirk Eddelbuettel  <edd@debian.org>
+
+        * R/00_classes.R: Added #nocov tags
+        * R/01_show.R: Ditto
+        * R/02_completion.R: Ditto
+        * R/03_prompt.R: Ditto
+
+2016-12-07  Dirk Eddelbuettel  <edd@debian.org>
+
+        * inst/include/Rcpp/vector/Matrix.h: Add 'using ...' to disambiguate size()
+
+2016-12-04  Dirk Eddelbuettel  <edd@debian.org>
+
+        * .codecov.yml (comment): Enable more verbose codecov.io reports
+
+2016-12-03  Dirk Eddelbuettel  <edd@debian.org>
+
+        * inst/unitTests/cpp/dates.cpp (Datetime_format): Additional ostream tests
+        * inst/unitTests/runit.Date.R (test.Date.formating): Ditto
+
+        * inst/unitTests/runit.system.R (test.RcppCxx): New tests
+
+        * R/RcppLdpath.R (canUseCXX0X): Simplified as we can now rely on more
+        modern compilers;  underlying C++ code has not been present for a while
+
+        * R/compilerCheck.R (compilerCheck): Added some #nocov tags
+        * R/unit.tests.R (test, gctortureRUnitTest): Ditto
+        * R/zzz.R (.onLoad): Ditto
+
+2016-11-29  Dirk Eddelbuettel  <edd@debian.org>
+
+        * DESCRIPTION (Version, Date): Roll minor version to 0.12.8.2
+
+2016-11-28  Dirk Eddelbuettel  <edd@debian.org>
+
+        * inst/unitTests/cpp/dates.cpp (Date_format, Datetime_format): New tests
+        * inst/unitTests/runit.Date.R (test.Date.formating): Ditto
+        (test.Datetime.formating): Ditto
+
+        * inst/unitTests/runit.sugar.R (test.intersect): Added sort() around
+        call to Sugar's intersect to ensure sorted output with g++-6.*
+
+2016-11-27  Dirk Eddelbuettel  <edd@debian.org>
+
+        * inst/include/Rcpp/date_datetime/Date.h (format, operator<<): Added
+        * inst/include/Rcpp/date_datetime/Datetime.h (format, operator<<): Ditto
+        * inst/include/Rcpp/date_datetime/newDateVector.h (operator<<): Ditto
+        * inst/include/Rcpp/date_datetime/newDatetimeVector.h (operator<<): Ditto
+
+2016-11-23  Dirk Eddelbuettel  <edd@debian.org>
+
+        * inst/include/Rcpp/config.h (RCPP_DEV_VERSION): Set minor version
+
+2016-11-22  Dirk Eddelbuettel  <edd@debian.org>
+
+        * DESCRIPTION (Date, Version): Roll minor version
+
+        * inst/include/Rcpp/date_datetime/newDatetimeVector.h (Rcpp): Small
+        correction concerning timezone attribute to ctor from RTYPE
+
+2016-11-22  Jim Hester  <james.f.hester@gmail.com>
+
+        * inst/src/api.cpp: Cleanup to stack message parseing
+        * inst/unitTests/cpp/exceptions.cpp: Unit tests for cleanup
+        * inst/unitTests/runit.exceptions.R: Ditto
+
+2016-11-19  James J Balamuta  <balamut2@illinois.edu>
+
+        * inst/unitTests/runit.environments.R: Added environment find unit tests
+        as well as a symbol access test for environment get.
+        * inst/unitTests/cpp/Environment.cpp: Idem
+
+2016-11-18  James J Balamuta  <balamut2@illinois.edu>
+
+        * vignettes/Rcpp-extending: Switched to attributes and
+          added external class pointer macro notes by MathurinD
+
+2016-11-16  Dirk Eddelbuettel  <edd@debian.org>
+
+        * DESCRIPTION: Release 0.12.8
+        * inst/NEWS.Rd: Release 0.12.8
+        * vignettes/Rcpp.bib: Release 0.12.8
+        * inst/include/Rcpp/config.h: Release 0.12.8
+
+        * README.md: Updated counts for dependents and tests
+
+        * debian/*: Changes for Debian release of 0.12.8
+
+2016-11-15  Dirk Eddelbuettel  <edd@debian.org>
+
+        * DESCRIPTION: Nathan Russell added to Authors
+
+2016-11-14  Jim Hester  <james.f.hester@gmail.com>
+
+        * inst/include/Rcpp/exceptions.h: Improved exception call stack
+        * inst/include/Rcpp/routines.h: Ditto
+        * inst/src/api.cpp: Ditto
+
+        * R/exections.R: Print and format method for stack straces
+
+        * inst/unitTests/runit.exceptions.R: Unit tests
+        * inst/unitTests/cpp/exceptions.cpp: Ditto
+
+2016-11-13  Dirk Eddelbuettel  <edd@debian.org>
+
+        * R/Attributes.R (mergeIntoBuildEnv): Correct 'empty' return
+
+2016-11-10  Dirk Eddelbuettel  <edd@debian.org>
+
+        * inst/include/Rcpp/date_datetime/newDateVector.h: Added constructor
+        using VectorBase<>
+
+2016-11-05  Daniel C. Dillon  <dcdillon@gmail.com>
+
+        * inst/include/Rcpp/date_datetime/newDatetimeVector.h: Added constructor
+        to instantiate newDatetimeVector from VectorBase.
+
+2016-11-04  Nathan Russell  <russell.nr2012@gmail.com>
+
+        * inst/include/Rcpp/macros/dispatch.h: Modify variadic macros
+        to not use GNU extensions
+        * DESCRIPTION: roll minor version
+
+2016-11-03  Nathan Russell  <russell.nr2012@gmail.com>
+
+        * inst/include/Rcpp/hash/IndexHash.h: Add casts to eliminate
+        signed / unsigned comparison warning
+        * inst/include/Rcpp/hash/SelfHash.h: Idem
+        * inst/unitTests/cpp/sugar.cpp: Added unit tests for sugar function
+        unique()
+        * inst/unitTests/runit.sugar.R: Idem
+
+2016-10-30  Dirk Eddelbuettel  <edd@debian.org>
+
+        * src/api.cpp: New capabilities field for new date(time) vectors
+        * inst/unitTests/runit.Date.R (test.DatetimeVector.ctor): Differentiate
+        in test as case of 'Inf' is handling differently by new and old datetime
+        classes (and passed through as is by new ones which is better)
+        * inst/unitTests/runit.InternalFunctionCPP11.R: Small cosmetic edit
+
+2016-10-24  Qiang Kou  <qkou@umail.iu.edu>
+
+        * inst/include/Rcpp/sugar/Range.h : fix range sugar ambiguity
+        * inst/unitTests/cpp/sugar.cpp: range sugar unit test
+        * inst/unitTests/runit.sugar.R: range sugar unit test
+
+2016-10-24  Nathan Russell  <russell.nr2012@gmail.com>
+
+	* inst/include/Rcpp/vector/MatrixBase.h: Change sugar
+	functions eye(), ones(), and zeros() into static methods
+	in MatrixBase
+	* inst/include/Rcpp/traits/one_type.h: Idem
+	* inst/include/Rcpp/traits/traits.h: Idem
+	* inst/unitTests/cpp/Matrix.cpp: Idem
+	* inst/unitTests/runit.Matrix.R: Idem
+
+2016-10-24  Qiang Kou  <qkou@umail.iu.edu>
+
+        * inst/include/Rcpp/sugar/Range.h: Range sugar uses R_xlen_t as start/end type
+
+2016-10-23  Nathan Russell  <russell.nr2012@gmail.com>
+
+        * inst/include/Rcpp/sugar/matrix/eye.h: New functions
+        eye(), ones(), and zeros()
+        * inst/include/Rcpp/sugar/matrix/matrix_functions.h: Idem
+        * inst/unitTests/cpp/sugar.cpp: Unit tests for new functions
+        * inst/unitTests/runit.sugar.R: Idem
+        * inst/unitTests/runit.dispatch.R (test.ExpressionVector): Use
+        expression rather than parse, correct typo
+
+2016-10-22  Qiang Kou  <qkou@umail.iu.edu>
+
+        * inst/include/Rcpp/hash/IndexHash.h: change hashing function to return unsigned int
+        * inst/include/Rcpp/hash/SelfHash.h: Ditto
+
+2016-10-21  Qiang Kou  <qkou@umail.iu.edu>
+
+        * inst/include/Rcpp/barrier.h: Change string_elt/vector_elt to accept R_xlen_t
+        * inst/include/Rcpp/routines.h: Ditto
+        * src/barrier.cpp: Ditto
+
+2016-10-19  Dirk Eddelbuettel  <edd@debian.org>
+
+        * inst/include/Rcpp/date_datetime/Datetime.h (Rcpp): Additional
+        operator+ for int argument
+
+2016-10-18  Dirk Eddelbuettel  <edd@debian.org>
+
+        * inst/include/Rcpp/date_datetime/Date.h (Rcpp): Add operator double()
+        * inst/include/Rcpp/date_datetime/Datetime.h (Rcpp): Ditto
+
+2016-10-17  Dirk Eddelbuettel  <edd@debian.org>
+
+        * inst/include/Rcpp/date_datetime/newDatetimeVector.h (Rcpp): Allow
+        setting of timezone attribute; default not-set leads to local as in R
+
+2016-10-16  Dirk Eddelbuettel  <edd@debian.org>
+
+        * inst/include/Rcpp.h (RCPP_NEW_DATE_DATETIME_VECTORS): Add a new
+        compile-time #define to switch between 'old' (existing) and 'new'
+        DateVector and DatimeVector classes. Currently uses 'new' for testing
+        plan to switch to proper deprecation schedule.
+
+        * inst/include/Rcpp/date_datetime/date_datetime.h: New header file (and
+        directory) regrouping all Date and Datetime headers, scalar and vector
+
+        * inst/include/Rcpp/date_datetime/Date.h: Moved one directory down
+        * inst/include/Rcpp/date_datetime/Datetime.h: Ditto
+        * inst/include/Rcpp/date_datetime/oldDateVector.h: Moved and renamed
+        * inst/include/Rcpp/date_datetime/oldDatetimeVector.h: Ditto
+
+        * inst/include/Rcpp/date_datetime/newDateVector.h: New implementation
+        inheriting from NumericVector, still optional
+        * inst/include/Rcpp/date_datetime/newDatetimeVector.h: Ditto
+
+2016-09-05  Dirk Eddelbuettel  <edd@debian.org>
+
+        * DESCRIPTION (Version): Roll minor version
+        * cleanup: Clean two more file type from vignettes/
+
+2016-09-04  Nathan Russell  <russell.nr2012@gmail.com>
+
+        * inst/include/Rcpp/sugar/functions/rowSums.h: New functions
+        rowSums(), colSums(), rowMeans(), and colMeans()
+        * inst/include/Rcpp/sugar/functions/functions.h: Idem
+        * inst/unitTests/cpp/sugar.cpp: Unit tests for new functions
+        * inst/unitTests/runit.sugar.R: Idem
+
+2016-09-04  Dirk Eddelbuettel  <edd@debian.org>
+
+        * DESCRIPTION: Release 0.12.7
+        * inst/NEWS.Rd: Release 0.12.7
+        * vignettes/Rcpp.bib: Release 0.12.7
+        * inst/include/Rcpp/config.h: Release 0.12.7
+
+        * README.md: Updated counts for dependents and tests
+
+        * debian/*: Changes for Debian release of 0.12.7
+
+2016-09-02  Simon Dirmeier <simon.dirmeier@bsse.ethz.ch>
+
+        * src/attributes.cpp: Remove leading underscore in header guard
+
+2016-08-14  James J Balamuta  <balamut2@illinois.edu>
+
+        * inst/examples/FastLM/lmGSL.R: Updated example to use new GSL templates
+
+2016-08-11  Dirk Eddelbuettel  <edd@debian.org>
+
+	* .travis.yml: Switch to using run.sh for Travis CI
+
+2016-08-09  Artem Klevtsov <a.a.klevtsov@gmail.com>
+
+        * inst/include/Rcpp/macros/dispatch.h: Add variadic conditional macro
+        when C++11 compiler used
+        * ints/include/unitTests/cpp/dispatch.cpp: Add unit tests for
+        RCPP_RETURN_VECTOR and RCPP_RETURN_MATRIX macro
+        * ints/include/unitTests/runit.dispatch.R: Idem
+
+2016-08-05  James J Balamuta  <balamut2@illinois.edu>
+
+        * inst/examples/FastLM/fastLMviaArmadillo.r: format fix
+        * inst/examples/FastLM/lmGSL.R: Updated example to use
+        Rcpp attributes instead of cxxfunction
+        * inst/examples/FastLM/lmArmadillo.R: Idem
+        * inst/examples/functionCallback/newApiExample.r: Idem
+        * inst/examples/RcppInline/RcppInlineExample.r: Idem
+        * inst/examples/RcppInline/RcppInlineWithLibsExamples.r: Idem
+        * inst/examples/RcppInline/UncaughtExceptions.r: Idem
+        * inst/examples/RcppInline/external_pointer.r: Idem
+
+2016-08-04  James J Balamuta  <balamut2@illinois.edu>
+
+        * src/attributes.cpp: Correct variable re-declaration
+        * inst/examples/RcppGibbs/RcppGibbs.R: Updated example to use Rcpp
+        attributes instead of cxxfunction
+        * inst/examples/RcppGibbs/timeRNGs.R: Idem
+
+2016-08-03  Dirk Eddelbuettel  <edd@debian.org>
+
+        * .gitattributes: Added to have ChangeLog and NEWS.Rd merge via union
+
+2016-08-02  James J Balamuta  <balamut2@illinois.edu>
+
+        * R/Rcpp.package.skeleton.R: Added autogeneration warning
+        * src/attributes.cpp: Fixed invalid C++ Identifiers and modified export
+        header to warn against hand edits
+        * vignettes/Rcpp-package.Rnw: Updated code generation snippets
+        * man/Rcpp.package.skeleton.Rd: Add warning on hand edits to the
+        autogenerated RcppExports files.
+        * man/compileAttributes.Rd: Idem
+
+2016-08-02 Qiang Kou <qkou@umail.iu.edu>
+
+        * inst/include/Rcpp/String.h: CE_UTF8 as default encoding
+        * inst/unitTests/cpp/String.cpp: Update unit test
+        * inst/unitTests/runit.String.R: Idem
+
+2016-08-01 Nathan Russell <russell.nr2012@gmail.com>
+
+        * inst/include/Rcpp/vector/Vector.h: Added decreasing option for Vector
+        sort
+        * inst/include/Rcpp/internal/NAComparator.h: Idem
+        * inst/unitTests/cpp/Vector.cpp: Idem
+        * inst/unitTests/runit.Vector.R: Idem
+
+2016-07-31 Qiang Kou <qkou@umail.iu.edu>
+
+        * inst/examples/SugarPerformance/sugarBenchmarks.R: Remove usage of Rf_eval
+        * inst/include/Rcpp/Environment.h: Idem
+        * inst/include/Rcpp/Module.h: Idem
+        * inst/include/Rcpp/exceptions.h: Idem
+        * inst/include/Rcpp/proxy/FieldProxy.h: Idem
+        * inst/include/Rcpp/r_cast.h: Idem
+        * inst/unitTests/cpp/language.cpp: Idem
+        * src/barrier.cpp: Idem
+
+2016-07-24  Dirk Eddelbuettel  <edd@debian.org>
+
+        * inst/unitTests/cpp/rmath.cpp: Added RNG unit tests for sugar variants
+        * inst/unitTests/runit.rmath.R: Idem
+
+2016-07-22  James J Balamuta  <balamut2@illinois.edu>
+
+        * inst/unitTests/cpp/rmath.cpp: Added unit tests for Rmath RNGs
+        * inst/unitTests/runit.rmath.R: idem
+        * inst/include/Rcpp/Environment.h: Added get() & find() that accept
+        a symbol
+        * inst/include/Rcpp.h: Modified header load order so that Symbol.h
+        is now placed before Environment.h
+
+2016-07-21  Dirk Eddelbuettel  <edd@debian.org>
+
+        * DESCRIPTION (Version): Roll minor release
+
+2016-07-18  Kevin Ushey  <kevin@rstudio.com>
+
+        * inst/include/Rcpp/r/headers.h: Ensure NORET macro is set appropriately
+
+2016-07-18  Dirk Eddelbuettel  <edd@debian.org>
+
+        * DESCRIPTION: Release 0.12.6
+        * inst/NEWS.Rd: Release 0.12.6
+        * vignettes/Rcpp.bib: Release 0.12.6, RProtoBuf updates
+        * inst/include/Rcpp/config.h: Release 0.12.6
+
+        * README.md: Updated counts for dependents and tests
+
+        * debian/*: Changes for Debian release of 0.12.5
+
+2016-07-17  James J Balamuta  <balamut2@illinois.edu>
+
+        * vignettes/Rcpp-quickref.Rnw: Added sections on Rcpp attributes and
+        plugins. Facelifts on important notes, inline, environments, and calling
+        R functions.
+
+2016-07-16  Daniel C. Dillon  <dcdillon@gmail.com>
+
+        * Added a const_interator typedef to VectorBase
+
+2016-07-15  James J Balamuta  <balamut2@illinois.edu>
+
+        * vignettes/Rcpp-FAQ.Rnw: Added section on default function parameters
+
+2016-07-15  Dirk Eddelbuettel  <edd@debian.org>
+
+        * vignettes/Rcpp-FAQ.Rnw: Also point to Rcpp-attributes in Question 1
+
+2016-07-13  Dirk Eddelbuettel  <edd@debian.org>
+
+        * NAMESPACE: Add import for glob2rx to please R CMD check
+        * man/cppFunction.Rd: line break below 90 columns to please R CMD check
+
+2016-07-11  J.J. Allaire <jj@rstudio.org>
+
+        * R/Attributes.R Add cacheDir argument to sourceCpp to enable caching of
+        shared libraries across R sessions
+        * src/attributes.cpp Add cacheDir argument to sourceCpp to enable caching of
+        shared libraries across R sessions
+        * man/sourceCpp.Rd: Document new cacheDir option
+        * man/cppFunction.Rd: Idem
+        * man/evalFunction.Rd: Idem
+
+2016-07-10  Nathan Russell <russell.nr2012@gmail.com>
+
+        * inst/include/Rcpp/algorithm.h: Accomodate clang compiler
+
+2016-07-03  Dirk Eddelbuettel  <edd@debian.org>
+
+        * DESCRIPTION (Version): Rolling minor version
+
+2016-07-02  Qiang Kou  <qkou@umail.iu.edu>
+
+        * src/attributes.cpp: Replace '.' in package names
+
+2016-06-23  Dirk Eddelbuettel  <edd@debian.org>
+
+        * DESCRIPTION (Version): Rolling minor version
+
+        * inst/include/Rcpp/exceptions.h (Rcpp): Also expose Rf_warningcall()
+        within Rcpp namespace (without leading Rf_)
+
+2016-06-20  Qin Wenfeng <mail@qinwenfeng.com>
+
+        * inst/include/Rcpp/exceptions.h: add RCPP_USING_UTF8_ERROR_STRING macro
+        to use UTF-8 encoding exception string in R
+
+2016-06-14  Artem Klevtsov <a.a.klevtsov@gmail.com>
+
+        * inst/include/Rcpp/sugar/functions/na_omit.h: Improve na_omit for
+        vectors without NA
+        * inst/unitTests/cpp/sugar.cpp: Add unit test for the na_omit
+        * inst/unitTests/runit.sugar.R: Ditto
+
+2016-06-02  Kirill Müller <krlmlr@mailbox.org>
+
+        * inst/include/Rcpp/algorithm.h: Use "long long" only if available
+        * inst/include/Rcpp/exceptions.h: Annotate stop() with NORET
+
+2016-05-18  Daniel C. Dillon  <dcdillon@gmail.com>
+
+        * inst/include/Rcpp/algorithm.h: New approach for sugar
+
+        * inst/unitTests/cpp/algorithm.cpp: Unit test support
+        * inst/unitTests/runit.algorithm.R: Ditto
+
+2016-05-17  Dirk Eddelbuettel  <edd@debian.org>
+
+        * DESCRIPTION (Version): Rolling minor version
+
+2016-05-16  Qiang Kou  <qkou@umail.iu.edu>
+
+        * inst/include/Rcpp/String.h: Correct string replacement
+        * inst/unitTests/runit.String.R: Unit test
+
+2016-05-16  Daniel C. Dillon  <dcdillon@gmail.com>
+
+        * inst/include/Rcpp/sugar/functions/max.h: Fixing constness
+        * inst/include/Rcpp/sugar/functions/min.h: Ditto
+
+2016-05-15  Daniel C. Dillon  <dcdillon@gmail.com>
+
+        * inst/include/Rcpp/vector/Matrix.h: Correcting ambiguities in
+        Vector/Matrix and scalar operations
+        * inst/include/Rcpp/sugar/operators/divides.h: Ditto
+        * inst/include/Rcpp/sugar/operators/minus.h: Ditto
+        * inst/include/Rcpp/sugar/operators/plus.h: Ditto
+        * inst/include/Rcpp/sugar/operators/times.h: Ditto
+
+2016-05-14  Dirk Eddelbuettel  <edd@debian.org>
+
+        * DESCRIPTION: Release 0.12.5
+        * inst/NEWS.Rd: Release 0.12.5
+        * vignettes/Rcpp.bib: Release 0.12.5
+        * inst/include/Rcpp/config.h: Release 0.12.5
+
+        * debian/*: Changes for Debian release of 0.12.5
+
+        * vignettes/Rcpp.bib: Updated references
+
+2016-05-13  Dirk Eddelbuettel  <edd@debian.org>
+
+        * DESCRIPTION: Rolled minor version
+
+        * R/compilerCheck.R: Minimal R function to check g++ version sufficiency
+        * man/compilerCheck.Rd: Documentation
+
+2016-05-11  Dirk Eddelbuettel  <edd@debian.org>
+
+        * R/Rcpp.package.skeleton.R: Modified to create a package without notes,
+        warnings, or error even pkgKitten is not available
+
+        * R/Rcpp.package.skeleton.R (.playWithPerPackageHelpPage): Added new
+        helper function to be used when pkgKitten is not available
+        * inst/skeleton/manual-page-stub.Rd: Stub for per-package help page used
+        when pkgKitten is not available
+
+2016-05-10  Dirk Eddelbuettel  <edd@debian.org>
+
+        * R/Rcpp.package.skeleton.R: Also correct Title: and Description: to
+        satisfy R CMD check in R-release and (current) R-devel
+
+2016-05-08  Dirk Eddelbuettel  <edd@debian.org>
+
+        * inst/unitTests/cpp/Matrix.cpp: Made four scalar/matrix tests less
+        ambiguous for overloads by using double as scalar
+
+2016-05-06  Dirk Eddelbuettel  <edd@debian.org>
+
+        * R/loadRcppModules.R (loadRcppModules): Add call to .Deprecated
+        pointing out that loadModule is preferred
+        * man/Rcpp-deprecated.Rd: Added to list deprecated functions
+        * man/loadRcppModules-deprecated.Rd: Renamed to -deprecated, added link
+        to loadModule which is the preferred method
+
+        * vignettes/Rcpp-modules.Rnw: Updated with respect to loadRcppModules
+        deprecation and loadModule being preferred
+
+2016-04-15  Kevin Ushey <kevinushey@gmail.com>
+
+        * src/attributes.cpp: Add a missing 'winslash = "/"'
+
+2016-04-14  J.J. Allaire <jj@rstudio.org>
+
+        * src/attributes.cpp: Correct handling of dependent file paths on
+        Windows (use winslash = "/")
+
+2016-04-13  Dirk Eddelbuettel  <edd@debian.org>
+
+        * DESCRIPTION (Version): Rolling minor version and Date
+
+2016-04-11  Ben Goodrich  <goodrich.ben@gmail.com>
+
+        * R/Module.R: Avoid calling as.character() on C++Object to prevent race
+
+2016-04-02  Dirk Eddelbuettel  <edd@debian.org>
+
+        * DESCRIPTION: Rolled to minor version 0.12.4.3
+        * inst/include/Rcpp/config.h: Ditto
+
+        * ChangeLog: Added entries for PRs 453 and 454
+        * inst/NEWS.Rd: Add two missing \item uses
+
+        * R/Module.R: Rename copy to copyObject to avoid function name collisions
+        * inst/unitTests/runit.Module.R: Ditto
+        * man/copyObject.Rd: Ditto
+        * inst/NEWS.Rd: Ditto
+        * NAMESPACE: Ditto
+
+        * inst/unitTests/runit.environments.R: Skip test.environment.child test
+
+2016-03-31  Romain Francois <romain@r-enthusiasts.com>
+
+        * R/Modules.R: New top-level functions copy, destruct and is_destructed
+        * NAMESPACE: New functions copy, destruct and is_destructed exported
+        * man/copy.Rd: New manual page
+        * man/destruct.Rd: Ditto
+
+        * inst/include/Rcpp/module/class.h: Add copy constructortor + destructor
+        * inst/include/Rcpp/module/class_Base.h: Ditto
+        * src/Module.cpp: Ditto
+        * src/Rcpp_init.cpp: Ditto
+        * src/internal.h: Ditto
+
+        * inst/include/Rcpp/traits/traits.h: New trait detecting copy contructor
+        * inst/include/Rcpp/traits/has_copy_constructor.h: Ditto
+
+        * inst/unitTests/runit.Module.R: Test new copy constructor and destructor
+        * inst/unitTests/cpp/Module.cpp: Ditto
+
+2016-03-29  Daniel C. Dillon  <dcdillon@gmail.com>
+
+        * inst/include/Rcpp/String.h: Correct Rcpp::String for Rcpp::Nullable
+
+2016-03-27  Qin Wenfeng  <mail@qinwenfeng.com>
+
+        * R/Attributes.R: Support new R 3.3.0 Windows toolchain
+
+2016-03-26  Dirk Eddelbuettel  <edd@debian.org>
+
+        * DESCRIPTION: Rolled Date and minor Version
+
+2016-03-23  Sergio Marques <sergio.rtmarques@gmail.com>
+
+        * src/api.cpp: Also check a flag __MUSL__ to accomodate Alpine
+
+2016-03-22  Dirk Eddelbuettel  <edd@debian.org>
+
+        * DESCRIPTION: Release 0.12.4
+        * inst/NEWS.Rd: Release 0.12.4
+        * vignettes/Rcpp.bib: Release 0.12.4
+        * inst/include/Rcpp/config.h: Release 0.12.4
+
+        * debian/*: Changes for Debian release of 0.12.4
+
+2016-03-19  Dirk Eddelbuettel  <edd@debian.org>
+
+        * README.md: Use canonical CRAN URL to please R-devel CMD check
+
+2016-03-12  Nathan Russell <russell.nr2012@gmail.com>
+
+        * inst/include/Rcpp/sugar/functions/cbind.h: Undefine MakeBindable macro
+        after use
+
+2016-03-12  Nathan Russell <russell.nr2012@gmail.com>
+
+        * inst/include/Rcpp/sugar/functions/cbind.h: New cbind() function
+        * inst/include/Rcpp/sugar/functions/functions.h: Idem
+        * inst/unitTests/cpp/sugar.cpp: Unit tests for cbind()
+        * inst/unitTests/runit.sugar.R: Idem
+
+2016-03-09  Colin Gillespie <csgillespie@gmail.com>
+
+        * vignettes/Rcpp-sugar.Rnw: Correct typos and indentation
+
+2016-03-09  Dirk Eddelbuettel  <edd@debian.org>
+
+        * inst/include/Rcpp/stats/random/rlogis.h: Updated Emacs header and
+        copyright, aligned indentation
+        * inst/include/Rcpp/stats/random/rnbinom.h: Idem
+        * inst/include/Rcpp/stats/random/rnbinom_mu.h: Idem
+        * inst/include/Rcpp/stats/random/rnchisq.h: Idem
+        * inst/include/Rcpp/stats/random/rnorm.h: Idem
+        * inst/include/Rcpp/stats/random/rt.h: Idem
+        * inst/include/Rcpp/stats/random/runif.h: Idem
+        * inst/include/Rcpp/stats/random/rweibull.h: Idem
+        * inst/include/Rcpp/stats/random/random.h: Idem
+        * inst/include/Rcpp/stats/random/rcauchy.h: Idem
+        * inst/include/Rcpp/stats/random/rchisq.h: Idem
+        * inst/include/Rcpp/stats/random/rexp.h: Idem
+        * inst/include/Rcpp/stats/random/rf.h: Idem
+        * inst/include/Rcpp/stats/random/rgeom.h: Idem
+        * inst/include/Rcpp/stats/random/rlnorm.h: Idem
+        * inst/include/Rcpp/stats/random/rbeta.h: Idem
+        * inst/include/Rcpp/stats/random/rbinom.h: Idem
+        * inst/include/Rcpp/stats/random/rgamma.h: Idem
+        * inst/include/Rcpp/stats/random/rhyper.h: Idem
+        * inst/include/Rcpp/stats/random/rpois.h: Idem
+        * inst/include/Rcpp/stats/random/rsignrank.h: Idem
+        * inst/include/Rcpp/stats/random/rwilcox.h: Idem
+
+2016-03-07  Dirk Eddelbuettel  <edd@debian.org>
+
+        * inst/include/Rcpp/stats/beta.h: Updated Emacs header and copyright
+        * inst/include/Rcpp/stats/binom.h: Idem
+        * inst/include/Rcpp/stats/cauchy.h: Idem
+        * inst/include/Rcpp/stats/chisq.h: Idem
+        * inst/include/Rcpp/stats/f.h: Idem
+        * inst/include/Rcpp/stats/gamma.h: Idem
+        * inst/include/Rcpp/stats/geom.h: Idem
+        * inst/include/Rcpp/stats/hyper.h: Idem
+        * inst/include/Rcpp/stats/nbeta.h: Idem
+        * inst/include/Rcpp/stats/nbinom.h: Idem
+        * inst/include/Rcpp/stats/nbinom_mu.h: Idem
+        * inst/include/Rcpp/stats/nchisq.h: Idem
+        * inst/include/Rcpp/stats/nf.h: Idem
+        * inst/include/Rcpp/stats/nt.h: Idem
+        * inst/include/Rcpp/stats/pois.h: Idem
+        * inst/include/Rcpp/stats/stats.h: Idem
+        * inst/include/Rcpp/stats/t.h: Idem
+        * inst/include/Rcpp/stats/unif.h: Idem
+        * inst/include/Rcpp/stats/dpq/dpq.h: Idem
+
+2016-03-05  Dirk Eddelbuettel  <edd@debian.org>
+
+        * inst/include/Rcpp/stats/exp.h: Replaced initial Emacs header line with
+        current one, ran M-x untabify, streamlined indentation, update copyright
+        * inst/include/Rcpp/stats/lnorm.h: Idem
+        * inst/include/Rcpp/stats/logis.h: Idem
+        * inst/include/Rcpp/stats/norm.h: Idem
+        * inst/include/Rcpp/stats/weibull.h: Idem
+
+2016-03-04  Dirk Eddelbuettel  <edd@debian.org>
+
+        * inst/unitTests/runit.Function.R: Switched to '/usr/bin/env r'
+        * inst/unitTests/runit.table.R: Idem
+        * inst/unitTests/runit.as.R: Idem
+        * inst/unitTests/runit.Date.R: Idem
+        * inst/unitTests/runit.misc.R: Idem
+        * inst/unitTests/runit.Language.R: Idem
+        * inst/unitTests/runit.subset.R: Idem
+        * inst/unitTests/runit.wrap.R: Idem
+        * inst/unitTests/runit.sugar.R: Idem
+        * inst/unitTests/runit.na.R: Idem
+        * inst/unitTests/runit.String.R: Idem
+        * inst/unitTests/runit.Vector.R: Idem
+        * inst/unitTests/runit.environments.R: Idem
+        * inst/unitTests/runit.Reference.R: Idem
+        * inst/unitTests/runit.Matrix.R: Idem
+        * inst/unitTests/runit.client.package.R: Idem
+        * inst/unitTests/runit.binary.package.R: Idem
+        * inst/unitTests/runit.support.R: Idem
+        * inst/unitTests/runit.S4.R: Idem
+        * inst/unitTests/runit.RObject.R: Idem
+        * inst/unitTests/runit.modref.R: Idem
+        * inst/unitTests/runit.InternalFunctionCPP11.R: Idem
+        * inst/unitTests/runit.attributes.R: Idem
+        * inst/unitTests/runit.sugar.var.R: Idem
+        * inst/unitTests/runit.Module.R: Idem
+        * inst/unitTests/runit.XPTr.R: Idem
+        * inst/unitTests/runit.Module.client.package.R: Idem
+        * inst/unitTests/runit.stats.R: Idem
+        * inst/unitTests/runit.rmath.R: Idem
+        * inst/unitTests/runit.DataFrame.R: Idem
+        * inst/unitTests/runit.wstring.R: Idem
+        * inst/unitTests/runit.InternalFunction.R: Idem
+
+2016-03-03  Dirk Eddelbuettel  <edd@debian.org>
+
+        * inst/examples/FastLM/benchmarkLongley.r: Switched to '/usr/bin/env r'
+        * inst/examples/FastLM/fastLMviaArmadillo.r: Idem
+        * inst/examples/FastLM/fastLMviaGSL.r: Idem
+        * inst/examples/FastLM/lmArmadillo.R: Idem
+        * inst/examples/FastLM/lmGSL.R: Idem
+        * inst/examples/FastLM/benchmark.r: Idem
+        * inst/examples/ConvolveBenchmarks/exampleRCode.r: Idem
+
+2016-02-27  Dirk Eddelbuettel  <edd@debian.org>
+
+        * inst/examples/RcppInline/RcppInlineWithLibsExamples.r: Switched to
+        using '/usr/bin/env r', switch to using 'cxxfunction' and RcppGSL plugin
+
+        * inst/examples/RcppInline/external_pointer.r: Switched to '/usr/bin/env r'
+        * inst/examples/RcppInline/RcppInlineExample.r: Idem
+        * inst/examples/ConvolveBenchmarks/overhead.r: Idem
+
+        * inst/include/Rcpp/Fast.h (Rcpp): Undo two const declarations
+
+2016-02-23  Dirk Eddelbuettel  <edd@debian.org>
+
+        * inst/examples/OpenMP/OpenMPandInline.r: Switched to '/usr/bin/env r'
+        * inst/examples/RcppInline/RcppSimpleExample.r: Idem
+        * inst/examples/RcppInline/RObject.r: Idem
+        * inst/examples/RcppInline/UncaughtExceptions.r: Idem
+
+2016-02-21  Dirk Eddelbuettel  <edd@debian.org>
+
+        * inst/examples/functionCallback/newApiExample.r (vecfunc): Switched to
+        using '/usr/bin/env r', switch to using 'cxxfunction'
+
+        * inst/examples/Misc/fibonacci.r: Switched to using '/usr/bin/env r',
+        added explicit load of Rcpp package
+
+        * inst/examples/Misc/newFib.r: Switched to using '/usr/bin/env r'
+        * inst/examples/Misc/ifelseLooped.r: Idem
+        * inst/examples/Misc/piBySimulation.r: Idem
+        * inst/examples/SugarPerformance/sugarBenchmarks.r: Idem
+
+2016-02-16  Dirk Eddelbuettel  <edd@debian.org>
+
+        * vignettes/Rcpp-FAQ.Rnw: Added answer on fixed-size limit of arguments
+
+2016-02-07  Dirk Eddelbuettel  <edd@debian.org>
+
+        * R/Attributes.R (sourceCppFunction): Use fully matched seq(along.with=...)
+
+        * vignettes/Rcpp-FAQ.Rnw: Added a table of contents
+
+2016-02-06  James J Balamuta  <balamut2@illinois.edu>
+
+        * vignettes/Rcpp-FAQ.Rnw (Rcpp): Additional material, and corrections,
+        for use on OS X
+
+2016-01-30  Qiang Kou  <qkou@umail.iu.edu>
+
+        * inst/include/Rcpp/vector/Subsetter.h: Fix the error under gc
+        * inst/unitTests/cpp/Vector.cpp : Add tests
+        * inst/unitTests/runit.Vector.R : Idem
+
+2016-01-29  Dirk Eddelbuettel  <edd@debian.org>
+
+        * vignettes/Rcpp-FAQ.Rnw (Rcpp): Add new entry about required TeXlive
+        installation to build vignettes (issue #422)
+
+2016-01-22  Dirk Eddelbuettel  <edd@debian.org>
+
+        * DESCRIPTION (Version): Mark as 0.12.3.1
+
+2016-01-22  Daniel C. Dillon  <dcdillon@gmail.com>
+
+        * R/Attributes.R: Add plugin for cpp14
+
+2016-01-18  Daniel C. Dillon  <dcdillon@gmail.com>
+
+        * inst/include/Rcpp/Nullable.h: Add isUsable()
+        * inst/unitTests/cpp/misc.cpp: Add tests
+        * inst/unitTests/runit.misc.R: Idem
+
+2016-01-17  Nathan Russell <russell.nr2012@gmail.com>
+
+        * inst/include/Rcpp/sugar/functions/median.h: New function
+        * inst/unitTests/cpp/sugar.cpp: Add tests
+        * inst/unitTests/runit.sugar.R: Idem
+
+2016-01-17  Daniel C. Dillon  <dcdillon@gmail.com>
+
+        * inst/include/Rcpp/Nullable.h: Add as() and clone()
+        * inst/unitTests/cpp/misc.cpp: Add tests
+        * inst/unitTests/runit.misc.R: Idem
+
+2016-01-13  Kirill Mueller  <kirill.mueller@ivt.baug.ethz.ch>
+
+        * inst/include/Rcpp/Nullable.h: Added const support
+        * inst/unitTests/cpp/misc.cpp: Added tests for const support
+
+2016-01-10  Dirk Eddelbuettel  <edd@debian.org>
+
+        * DESCRIPTION: Release 0.12.3
+        * inst/NEWS.Rd: Release 0.12.3
+        * vignettes/Rcpp.bib: Release 0.12.3
+        * inst/include/Rcpp/config.h: Release 0.12.3
+
+        * debian/*: Changes for Debian release of 0.12.3
+
+        * vignettes/Rcpp.bib: Updated all CRAN reference to current versions
+
+2016-01-09  Dirk Eddelbuettel  <edd@debian.org>
+
+        * Contributing.md: Added to GitHub repo
+
+        * .Rbuildignore: Ensure Contributing.md is not in R package, also
+        removed two old entries
+
+2015-12-29  Joshua Pritikin <jpritikin@pobox.com>
+
+        * inst/include/Rcpp/Module.h: Initialize base class in copy ctor
+        * inst/include/Rcpp/macros/interface.h: Idem
+
+2015-12-12  Qiang Kou <qkou@umail.iu.edu>
+
+        * inst/include/Rcpp/String.h: std::hash<Rcpp::String>
+        * inst/unitTests/cpp/wrap.cpp: Unit tests
+        * inst/unitTests/runit.wrap.R: Unit tests
+
+2015-12-04  Qiang Kou <qkou@umail.iu.edu>
+
+        * inst/include/Rcpp/vector/Matrix.h: Add math operators between matrix
+        and scalar
+        * inst/unitTests/runit.Matrix.R: Unit tests
+        * inst/unitTests/cpp/Matrix.cpp: Unit tests
+
+2015-11-27  Daniel C. Dillon  <dcdillon@gmail.com>
+
+        * inst/include/Rcpp/vector/proxy.h: const_iterators for CharacterVector
+        now work analogously to iterators
+        * inst/include/Rcpp/vector/const_generic_proxy.h: Idem
+        * inst/include/Rcpp/vector/const_string_proxy.h: Idem
+        * inst/include/Rcpp/vector/traits.h: Idem
+
+        * inst/unitTests/cpp/Vector.cpp: Tests for above
+        * inst/unitTests/runit.Vector.R: Idem
+
+        [ All this was commited on Sep 5 but only merged Nov 27 ]
+
+2015-11-25  JJ Allaire <jj@rstudio.org>
+
+        * src/attributes.cpp: Avoid invalid function names when
+        generating C++ interfaces.
+
+2015-11-15  Kazuki Fukui  <kazunoko93@gmail.com>>
+
+        * src/attributes.cpp: Insert extra space around & in interface
+
+2015-11-14  Dirk Eddelbuettel  <edd@debian.org>
+
+        * .travis.yml: Add token for secure Slack & Travis integration
+
 2015-11-14  Dirk Eddelbuettel  <edd@debian.org>
 
         * DESCRIPTION: Release 0.12.2
         * inst/NEWS.Rd: Release 0.12.2
-	* vignettes/Rcpp.bib: Release 0.12.2
+        * vignettes/Rcpp.bib: Release 0.12.2
         * inst/include/Rcpp/config.h: Release 0.12.2
 
         * debian/*: Changes for Debian release of 0.12.2
 
-	* vignettes/Rcpp.bib: Updated all CRAN reference to current versions
+        * vignettes/Rcpp.bib: Updated all CRAN reference to current versions
 
 2015-11-13  Dirk Eddelbuettel  <edd@debian.org>
 
@@ -97,7 +1139,7 @@
 
         * DESCRIPTION: Release 0.12.1
         * inst/NEWS.Rd: Release 0.12.1
-	* vignettes/Rcpp.bib: Release 0.12.1
+        * vignettes/Rcpp.bib: Release 0.12.1
         * inst/include/Rcpp/config.h: Release 0.12.1
 
         * debian/*: Changes for Debian release of 0.12.1
@@ -242,7 +1284,7 @@
 
         * DESCRIPTION: Release 0.12.0
         * inst/NEWS.Rd: Release 0.12.0
-	* vignettes/Rcpp.bib: Release 0.12.0
+        * vignettes/Rcpp.bib: Release 0.12.0
         * inst/include/Rcpp/config.h: Release 0.12.0
 
         * debian/*: Changes for Debian release of 0.12.0
@@ -312,9 +1354,9 @@
 
 2015-06-25  Kevin Ushey  <kevinushey@gmail.com>
 
-	* inst/include/Rcpp/api/meat/Rcpp_eval.h: reset error after Rcpp_eval
-	* inst/unitTests/cpp/Function.cpp: unit tests
-	* inst/unitTests/runit.Function.R: unit tests
+        * inst/include/Rcpp/api/meat/Rcpp_eval.h: reset error after Rcpp_eval
+        * inst/unitTests/cpp/Function.cpp: unit tests
+        * inst/unitTests/runit.Function.R: unit tests
         * inst/include/Rcpp/Function.h: catch empty error messages
         * inst/include/Rcpp/api/meat/Rcpp_eval.h: protect call
 
@@ -1187,24 +2229,24 @@
 
 2014-01-23  Dirk Eddelbuettel  <edd@debian.org>
 
-	* inst/announce/ANNOUNCE-0.11.0.txt: Added for next release
+        * inst/announce/ANNOUNCE-0.11.0.txt: Added for next release
 
 2014-01-21  Dirk Eddelbuettel  <edd@debian.org>
 
-	* R/Rcpp.package.skeleton.R: Update skeleton package to add proper
-	Imports: to DESCRIPTION, and importFrom() to NAMESPACE
+        * R/Rcpp.package.skeleton.R: Update skeleton package to add proper
+        Imports: to DESCRIPTION, and importFrom() to NAMESPACE
 
 2014-01-19  Kevin Ushey  <kevinushey@gmail.com>
 
-	* inst/include/Rcpp/api/meat/Vector.h: Add missing UNPROTECT in
-	push_back_name__impl
+        * inst/include/Rcpp/api/meat/Vector.h: Add missing UNPROTECT in
+        push_back_name__impl
 
 2014-01-18  Kevin Ushey  <kevinushey@gmail.com>
 
-	* inst/unitTests/runit.S4.R: Add a test for ctor from slot proxy
-	* inst/unitTests/cpp/S4.cpp: Add a test for ctor from slot proxy
-	* inst/include/Rcpp/vector/Vector.h: Add missing r_cast to vector
-	ctor from proxy
+        * inst/unitTests/runit.S4.R: Add a test for ctor from slot proxy
+        * inst/unitTests/cpp/S4.cpp: Add a test for ctor from slot proxy
+        * inst/include/Rcpp/vector/Vector.h: Add missing r_cast to vector
+        ctor from proxy
 
 2014-01-18  JJ Allaire <jj@rstudio.org>
 
@@ -1213,14 +2255,14 @@
 
 2014-01-18  Kevin Ushey  <kevinushey@gmail.com>
 
-	* inst/unitTests/cpp/Matrix.cpp: Add unit test
-	* inst/unitTests/runit.Matrix.R: Add unit test
-	* inst/include/Rcpp/api/meat/Matrix.h: Bug fix in operator=
+        * inst/unitTests/cpp/Matrix.cpp: Add unit test
+        * inst/unitTests/runit.Matrix.R: Add unit test
+        * inst/include/Rcpp/api/meat/Matrix.h: Bug fix in operator=
 
 2014-01-17  Dirk Eddelbuettel  <edd@debian.org>
 
-	* R/RcppLdpath.R (RcppCxxFlags): Restore function to supply values
-	for include files for packages not yet converted to LinkingTo:
+        * R/RcppLdpath.R (RcppCxxFlags): Restore function to supply values
+        for include files for packages not yet converted to LinkingTo:
 
 2014-01-16  JJ Allaire <jj@rstudio.org>
 
@@ -1231,7 +2273,7 @@
 
 2014-01-15  Dirk Eddelbuettel  <edd@debian.org>
 
-	* inst/include/Rcpp/exceptions.h: Move stop() into Rcpp namespace
+        * inst/include/Rcpp/exceptions.h: Move stop() into Rcpp namespace
 
 2014-01-03  JJ Allaire <jj@rstudio.org>
 
@@ -1245,7 +2287,7 @@
 
 2013-12-31  Dirk Eddelbuettel  <edd@debian.org>
 
-	* vignettes/Rcpp.bib: Updated CRAN package references
+        * vignettes/Rcpp.bib: Updated CRAN package references
 
 2013-12-20  Kevin Ushey  <kevinushey@gmail.com>
 

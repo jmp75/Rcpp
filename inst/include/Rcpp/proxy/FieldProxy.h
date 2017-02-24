@@ -45,12 +45,12 @@ public:
 
         SEXP get() const {
             Shield<SEXP> call( Rf_lang3( R_DollarSymbol, parent, Rf_mkString(field_name.c_str()) ) ) ;
-            return Rf_eval( call, R_GlobalEnv ) ;
+            return Rcpp_eval( call, R_GlobalEnv ) ;
         }
         void set(SEXP x ) {
             SEXP dollarGetsSym = Rf_install( "$<-");
             Shield<SEXP> call( Rf_lang4( dollarGetsSym, parent, Rf_mkString(field_name.c_str()) , x ) ) ;
-            parent.set__( Rf_eval( call, R_GlobalEnv ) );
+            parent.set__( Rcpp_eval( call, R_GlobalEnv ) );
         }
     } ;
 
@@ -72,7 +72,7 @@ public:
 
         SEXP get() const {
             Shield<SEXP> call( Rf_lang3( R_DollarSymbol, parent, Rf_mkString(field_name.c_str()) ) ) ;
-            return Rf_eval( call, R_GlobalEnv ) ;
+            return Rcpp_eval( call, R_GlobalEnv ) ;
         }
     } ;
 

@@ -1,5 +1,5 @@
 
-# Copyright (C) 2012 - 2015  JJ Allaire, Dirk Eddelbuettel and Romain Francois
+# Copyright (C) 2012 - 2016  JJ Allaire, Dirk Eddelbuettel and Romain Francois
 #
 # This file is part of Rcpp.
 #
@@ -23,15 +23,24 @@ sourceCpp <- function(file = "",
                       env = globalenv(),
                       embeddedR = TRUE,
                       rebuild = FALSE,
+                      cacheDir = getOption("rcpp.cache.dir", tempdir()),
+                      cleanupCacheDir = FALSE,
                       showOutput = verbose,
                       verbose = getOption("verbose"),
                       dryRun = FALSE) {
+
+    # use an architecture/version specific subdirectory of the cacheDir
+    # (since cached dynlibs can now perist across sessions we need to be
+    # sure to invalidate them when R or Rcpp versions change)
+    cacheDir <- path.expand(cacheDir)
+    cacheDir <- .sourceCppPlatformCacheDir(cacheDir)
+    cacheDir <- normalizePath(cacheDir)
 
     # resolve code into a file if necessary. also track the working
     # directory to source the R embedded code chunk within
     if (!missing(code)) {
         rWorkingDir <- getwd()
-        file <- tempfile(fileext = ".cpp")
+        file <- tempfile(fileext = ".cpp", tmpdir = cacheDir)
         con <- file(file, open = "w")
         writeLines(code, con)
         close(con)
@@ -43,22 +52,22 @@ sourceCpp <- function(file = "",
     file <- normalizePath(file, winslash = "/")
 
     # error if the file extension isn't one supported by R CMD SHLIB
-    if (! tools::file_ext(file) %in% c("cc", "cpp")) {
+    if (! tools::file_ext(file) %in% c("cc", "cpp")) {          # #nocov start
         stop("The filename '", basename(file), "' does not have an ",
              "extension of .cc or .cpp so cannot be compiled.")
-    }
+    }                                                           # #nocov end
 
     # validate that there are no spaces in the path on windows
-    if (.Platform$OS.type == "windows") {
+    if (.Platform$OS.type == "windows") {                       # #nocov start
         if (grepl(' ', basename(file), fixed=TRUE)) {
             stop("The filename '", basename(file), "' contains spaces. This ",
                  "is not permitted.")
-        }
+        }                                                       # #nocov end
     }
 
     # get the context (does code generation as necessary)
     context <- .Call("sourceCppContext", PACKAGE="Rcpp",
-                     file, code, rebuild, .Platform)
+                     file, code, rebuild, cacheDir, .Platform)
 
     # perform a build if necessary
     if (context$buildRequired || rebuild) {
@@ -89,10 +98,10 @@ sourceCpp <- function(file = "",
         # the build environment
         fromCode <- !missing(code)
         if (!.callBuildHook(context$cppSourcePath, fromCode, showOutput)) {
-            .restoreEnvironment(envRestore)
+            .restoreEnvironment(envRestore)                     # #nocov start
             setwd(cwd)
             return (invisible(NULL))
-        }
+        }                                                       # #nocov end
 
         # on.exit handler calls hook and restores environment and working dir
         on.exit({
@@ -104,10 +113,10 @@ sourceCpp <- function(file = "",
         })
 
         # unload and delete existing dylib if necessary
-        if (file.exists(context$previousDynlibPath)) {
-            try(silent=T, dyn.unload(context$previousDynlibPath))
+        if (file.exists(context$previousDynlibPath)) {          # #nocov start
+            try(silent=TRUE, dyn.unload(context$previousDynlibPath))
             file.remove(context$previousDynlibPath)
-        }
+        }                                                       # #nocov end
 
         # prepare the command (output if we are in showOutput mode)
         cmd <- paste(R.home(component="bin"), .Platform$file.sep, "R ",
@@ -115,9 +124,9 @@ sourceCpp <- function(file = "",
                      "-o ", shQuote(context$dynlibFilename), " ",
                      ifelse(rebuild, "--preclean ", ""),
                      ifelse(dryRun, "--dry-run ", ""),
-                     paste(shQuote(context$cppDependencySourcePaths), 
+                     paste(shQuote(context$cppDependencySourcePaths),
                            collapse = " "), " ",
-                     shQuote(context$cppSourceFilename), " ", 
+                     shQuote(context$cppSourceFilename), " ",
                      sep="")
         if (showOutput)
             cat(cmd, "\n")
@@ -134,22 +143,22 @@ sourceCpp <- function(file = "",
             # examine status
             status <- attr(result, "status")
             if (!is.null(status)) {
-                cat(result, sep = "\n")
+                cat(result, sep = "\n")                         # #nocov start
                 succeeded <- FALSE
                 stop("Error ", status, " occurred building shared library.")
             } else if (!file.exists(context$dynlibFilename)) {
                 cat(result, sep = "\n")
                 succeeded <- FALSE
-                stop("Error occurred building shared library.")
+                stop("Error occurred building shared library.") # #nocov end
             } else {
                 succeeded <- TRUE
             }
         }
-        else if (!identical(as.character(result), "0")) {
+        else if (!identical(as.character(result), "0")) {       # #nocov start
             succeeded <- FALSE
             stop("Error ", result, " occurred building shared library.")
         } else {
-            succeeded <- TRUE
+            succeeded <- TRUE                                   # #nocov end
         }
     }
     else {
@@ -178,9 +187,9 @@ sourceCpp <- function(file = "",
         scriptPath <- file.path(context$buildDirectory, context$rSourceFilename)
         source(scriptPath, local = env)
 
-    } else if (getOption("rcpp.warnNoExports", default=TRUE)) {
+    } else if (getOption("rcpp.warnNoExports", default=TRUE)) { # #nocov start
         warning("No Rcpp::export attributes or RCPP_MODULE declarations ",
-                "found in source")
+                "found in source")                              # #nocov end
     }
 
     # source the embeddedR
@@ -190,9 +199,36 @@ sourceCpp <- function(file = "",
         source(file=srcConn, echo=TRUE)
     }
 
+    # cleanup the cache dir if requested
+    if (cleanupCacheDir)
+        cleanupSourceCppCache(cacheDir, context$cppSourcePath, context$buildDirectory)
+
     # return (invisibly) a list containing exported functions and modules
     invisible(list(functions = context$exportedFunctions,
-                   modules = context$modules))
+                   modules = context$modules,
+                   cppSourcePath = context$cppSourcePath,
+                   buildDirectory = context$buildDirectory))
+}
+
+
+# Cleanup a directory used as the cache for a sourceCpp compilation. This will
+# remove all files from the cache directory that aren't a result of the
+# compilation that yielded the passed buildDirectory.
+cleanupSourceCppCache <- function(cacheDir, cppSourcePath, buildDirectory) {
+    # normalize cpp source path and build directory             # #nocov start
+    cppSourcePath <- normalizePath(cppSourcePath)
+    buildDirectory <- normalizePath(buildDirectory)
+
+    # determine the parent dir that was used for the compilation then collect all the
+    # *.cpp files and subdirectories therein
+    cacheFiles <- list.files(cacheDir, pattern = glob2rx("*.cpp"), recursive = FALSE, full.names = TRUE)
+    cacheFiles <- c(cacheFiles, list.dirs(cacheDir, recursive = FALSE, full.names = TRUE))
+    cacheFiles <- normalizePath(cacheFiles)
+
+    # determine the list of tiles that were not yielded by the passed sourceCpp
+    # result and remove them
+    oldCacheFiles <- cacheFiles[!cacheFiles %in% c(cppSourcePath, buildDirectory)]
+    unlink(oldCacheFiles, recursive = TRUE)                     # #nocov end
 }
 
 # Define a single C++ function
@@ -202,15 +238,16 @@ cppFunction <- function(code,
                         includes = character(),
                         env = parent.frame(),
                         rebuild = FALSE,
+                        cacheDir = getOption("rcpp.cache.dir", tempdir()),
                         showOutput = verbose,
                         verbose = getOption("verbose")) {
 
     # process depends
-    if (!is.null(depends) && length(depends) > 0) {
+    if (!is.null(depends) && length(depends) > 0) {             # #nocov start
         depends <- paste(depends, sep=", ")
         scaffolding <- paste("// [[Rcpp::depends(", depends, ")]]", sep="")
         scaffolding <- c(scaffolding, "", .linkingToIncludes(depends, FALSE),
-                         recursive=TRUE)
+                         recursive=TRUE)                        # #nocov end
     }
     else {
         scaffolding <- "#include <Rcpp.h>"
@@ -218,7 +255,7 @@ cppFunction <- function(code,
 
     # process plugins
     if (!is.null(plugins) && length(plugins) > 0) {
-        plugins <- paste(plugins, sep=", ")
+        plugins <- paste(plugins, sep=", ")                     # #nocov start
         pluginsAttrib <- paste("// [[Rcpp::plugins(", plugins, ")]]", sep="")
         scaffolding <- c(scaffolding, pluginsAttrib)
 
@@ -227,7 +264,7 @@ cppFunction <- function(code,
             plugin <- .findPlugin(pluginName)
             settings <- plugin()
             scaffolding <- c(scaffolding, settings$includes, recursive=TRUE)
-        }
+        }                                                       # #nocov end
     }
 
     # remainder of scaffolding
@@ -243,12 +280,12 @@ cppFunction <- function(code,
     code <- paste(c(scaffolding, code, recursive = T), collapse="\n")
 
     # print the generated code if we are in verbose mode
-    if (verbose) {
+    if (verbose) {                                              # #nocov start
         cat("\nGenerated code for function definition:",
             "\n--------------------------------------------------------\n\n")
         cat(code)
         cat("\n")
-    }
+    }                                                           # #nocov end
 
     # source cpp into specified environment. if env is set to NULL
     # then create a new one (the caller can get a hold of the function
@@ -258,6 +295,7 @@ cppFunction <- function(code,
     exported <- sourceCpp(code = code,
                           env = env,
                           rebuild = rebuild,
+                          cacheDir = cacheDir,
                           showOutput = showOutput,
                           verbose = verbose)
 
@@ -273,7 +311,7 @@ cppFunction <- function(code,
 }
 
 .type_manipulate <- function( what = "DEMANGLE", class = NULL ) {
-    function( type = "int", ... ){
+    function( type = "int", ... ){                              # #nocov start
         code <- sprintf( '
         SEXP manipulate_this_type(){
             typedef %s type ;
@@ -287,34 +325,35 @@ cppFunction <- function(code,
             class(res) <- class
         }
         res
-    }
+    }                                                           # #nocov end
 }
 
 demangle <- .type_manipulate( "DEMANGLE" )
 sizeof   <- .type_manipulate( "sizeof", "bytes" )
 
-print.bytes <- function( x, ...){
+print.bytes <- function( x, ...){                               # #nocov start
     writeLines( sprintf( "%d bytes (%d bits)", x, 8 * x ) )
     invisible( x )
-}
+}                                                               # #nocov end
 
 # Evaluate a simple c++ expression
 evalCpp <- function(code,
                     depends = character(),
-                    plugins = character(), 
+                    plugins = character(),
                     includes = character(),
                     rebuild = FALSE,
+                    cacheDir = getOption("rcpp.cache.dir", tempdir()),
                     showOutput = verbose,
                     verbose = getOption( "verbose" ) ){
 
-
+                                                                # #nocov start
     code <- sprintf( "SEXP get_value(){ return wrap( %s ) ; }", code )
     env <- new.env()
     cppFunction(code, depends = depends, plugins = plugins,
                 includes = includes, env = env,
-                rebuild = rebuild, showOutput = showOutput, verbose = verbose )
+                rebuild = rebuild, cacheDir = cacheDir, showOutput = showOutput, verbose = verbose )
     fun <- env[["get_value"]]
-    fun()
+    fun()                                                       # #nocov end
 }
 
 areMacrosDefined <- function(names,
@@ -364,7 +403,7 @@ compileAttributes <- function(pkgdir = ".", verbose = getOption("verbose")) {
                  .readPkgDescField(pkgDesc, "LinkingTo", character()))
     depends <- unique(.splitDepends(depends))
     depends <- depends[depends != "R"]
-                 
+
     # determine source directory
     srcDir <- file.path(pkgdir, "src")
     if (!file.exists(srcDir))
@@ -395,11 +434,11 @@ compileAttributes <- function(pkgdir = ".", verbose = getOption("verbose")) {
     pkgHeader <- c(paste0(pkgname, ".h"), typesHeader)
     pkgHeaderPath <- file.path(pkgdir, "inst", "include",  pkgHeader)
     pkgHeader <- pkgHeader[file.exists(pkgHeaderPath)]
-    if (length(pkgHeader) > 0) {
+    if (length(pkgHeader) > 0) {                                # #nocov start
         pkgInclude <- paste("#include \"../inst/include/",
                             pkgHeader, "\"", sep="")
         includes <- c(pkgInclude, includes)
-    }
+    }                                                           # #nocov end
 
     # if a _types file is in src then include it
     pkgHeader <- typesHeader
@@ -419,11 +458,11 @@ compileAttributes <- function(pkgdir = ".", verbose = getOption("verbose")) {
 
 # built-in C++11 plugin
 .plugins[["cpp11"]] <- function() {
-    if (getRversion() >= "3.1")
+    if (getRversion() >= "3.1")         # with recent R versions, R can decide
         list(env = list(USE_CXX1X = "yes"))
     else if (.Platform$OS.type == "windows")
         list(env = list(PKG_CXXFLAGS = "-std=c++0x"))
-    else
+    else                                # g++-4.8.1 or later
         list(env = list(PKG_CXXFLAGS ="-std=c++11"))
 }
 
@@ -432,9 +471,28 @@ compileAttributes <- function(pkgdir = ".", verbose = getOption("verbose")) {
     list(env = list(PKG_CXXFLAGS ="-std=c++0x"))
 }
 
+## built-in C++14 plugin for C++14 standard
+## this is the default in g++-6.1 and later
+## per https://gcc.gnu.org/projects/cxx-status.html#cxx14
+.plugins[["cpp14"]] <- function() {
+    list(env = list(PKG_CXXFLAGS ="-std=c++14"))
+}
+
 # built-in C++1y plugin for C++14 and C++17 standard under development
 .plugins[["cpp1y"]] <- function() {
     list(env = list(PKG_CXXFLAGS ="-std=c++1y"))
+}
+
+# built-in C++17 plugin for C++17 standard (g++-6 or later)
+.plugins[["cpp17"]] <- function() {
+    list(env = list(PKG_CXXFLAGS ="-std=c++17"))
+}
+
+## built-in C++1z plugin for C++17 standard under development
+## note that as of Feb 2017 this is taken to be a moving target
+## see https://gcc.gnu.org/projects/cxx-status.html
+.plugins[["cpp1z"]] <- function() {
+    list(env = list(PKG_CXXFLAGS ="-std=c++1z"))
 }
 
 ## built-in OpenMP++11 plugin
@@ -445,7 +503,7 @@ compileAttributes <- function(pkgdir = ".", verbose = getOption("verbose")) {
 
 # register a plugin
 registerPlugin <- function(name, plugin) {
-    .plugins[[name]] <- plugin
+    .plugins[[name]] <- plugin                                  # #nocov
 }
 
 
@@ -456,7 +514,7 @@ sourceCppFunction <- function(func, isVoid, dll, symbol) {
 
     body <- quote( CALL_PLACEHOLDER ( EXTERNALNAME, ARG ) )[ c(1:2, rep(3, length(args))) ]
 
-    for (i in seq(along = args))
+    for (i in seq(along.with = args))
         body[[i+2]] <- as.symbol(args[i])
 
     body[[1L]] <- .Call
@@ -472,7 +530,7 @@ sourceCppFunction <- function(func, isVoid, dll, symbol) {
 
 
 # Print verbose output
-.printVerboseOutput <- function(context) {
+.printVerboseOutput <- function(context) {                      # #nocov start
 
     cat("\nGenerated extern \"C\" functions",
         "\n--------------------------------------------------------\n")
@@ -487,7 +545,7 @@ sourceCppFunction <- function(func, isVoid, dll, symbol) {
     cat("\nBuilding shared library",
         "\n--------------------------------------------------------\n",
         "\nDIR: ", context$buildDirectory, "\n\n", sep="")
-}
+}                                                               # #nocov end
 
 # Add LinkingTo dependencies if the sourceFile is in a package
 .getSourceCppDependencies <- function(depends, sourceFile) {
@@ -495,11 +553,11 @@ sourceCppFunction <- function(func, isVoid, dll, symbol) {
     # If the source file is in a package then simulate it being built
     # within the package by including it's LinkingTo dependencies,
     # the src directory (.), and the inst/include directory
-    if (.isPackageSourceFile(sourceFile)) {
+    if (.isPackageSourceFile(sourceFile)) {                     # #nocov start
         descFile <- file.path(dirname(sourceFile), "..", "DESCRIPTION")
         DESCRIPTION <- read.dcf(descFile, all = TRUE)
         linkingTo <- .parseLinkingTo(DESCRIPTION$LinkingTo)
-        unique(c(depends, linkingTo))
+        unique(c(depends, linkingTo))                           # #nocov end
     } else {
         depends
     }
@@ -514,12 +572,12 @@ sourceCppFunction <- function(func, isVoid, dll, symbol) {
 # Error if a package is not currently available
 .validatePackages <- function(depends, sourceFilename) {
     unavailable <- depends[!depends %in% .packages(all.available=TRUE)]
-    if (length(unavailable) > 0) {
+    if (length(unavailable) > 0) {                              # #nocov start
         stop(paste("Package '", unavailable[[1]], "' referenced from ",
                     "Rcpp::depends in source file ",
                       sourceFilename, " is not available.",
                       sep=""),
-                call. = FALSE)
+                call. = FALSE)                                  # #nocov end
     }
 }
 
@@ -543,10 +601,10 @@ sourceCppFunction <- function(func, isVoid, dll, symbol) {
 
 
 # Get the inline plugin for the specified package (return NULL if none found)
-.getInlinePlugin <- function(package) {
+.getInlinePlugin <- function(package) {                         # #nocov start
     tryCatch(get("inlineCxxPlugin", asNamespace(package), inherits = FALSE),
              error = function(e) NULL)
-}
+}                                                               # #nocov end
 
 # Lookup a plugin
 .findPlugin <- function(pluginName) {
@@ -574,7 +632,7 @@ sourceCppFunction <- function(func, isVoid, dll, symbol) {
 
         # protect against null or empty string
         if (is.null(value) || !nzchar(value))
-            return;
+            return(invisible(NULL))
 
         # if it doesn't exist already just set it
         if (is.null(buildEnv[[name]])) {
@@ -582,7 +640,7 @@ sourceCppFunction <- function(func, isVoid, dll, symbol) {
         }
         # if it's not identical then append
         else if (!identical(buildEnv[[name]], value)) {
-            buildEnv[[name]] <<- paste(buildEnv[[name]], value);
+            buildEnv[[name]] <<- paste(buildEnv[[name]], value) # #nocov
         }
         else {
             # it already exists and it's the same value, this
@@ -610,14 +668,14 @@ sourceCppFunction <- function(func, isVoid, dll, symbol) {
 
     # add packages to linkingTo and introspect for plugins
     for (package in depends) {
-
+                                                                # #nocov start
         # add a LinkingTo for this package
         linkingToPackages <- unique(c(linkingToPackages, package))
 
         # see if the package exports a plugin
         plugin <- .getInlinePlugin(package)
         if (!is.null(plugin))
-           setDependenciesFromPlugin(plugin)
+           setDependenciesFromPlugin(plugin)                    # #nocov end
     }
 
     # process plugins
@@ -638,14 +696,14 @@ sourceCppFunction <- function(func, isVoid, dll, symbol) {
     srcDir <- dirname(sourceFile)
     srcDir <- asBuildPath(srcDir)
     buildDirs <- srcDir
-    
+
     # if the source file is in a package then add inst/include
-    if (.isPackageSourceFile(sourceFile)) {
+    if (.isPackageSourceFile(sourceFile)) {                     # #nocov start
         incDir <- file.path(dirname(sourceFile), "..", "inst", "include")
         incDir <- asBuildPath(incDir)
-        buildDirs <- c(buildDirs, incDir)
+        buildDirs <- c(buildDirs, incDir)                       # #nocov end
     }
-    
+
     # set CLINK_CPPFLAGS with directory flags
     dirFlags <- paste0('-I"', buildDirs, '"', collapse=" ")
     buildEnv$CLINK_CPPFLAGS <- paste(buildEnv$CLINK_CPPFLAGS,
@@ -662,10 +720,10 @@ sourceCppFunction <- function(func, isVoid, dll, symbol) {
     # on windows see if we need to add Rtools to the path
     # (don't do this for RStudio since it has it's own handling)
     if (identical(Sys.info()[['sysname']], "Windows") &&
-        !nzchar(Sys.getenv("RSTUDIO"))) {
+        !nzchar(Sys.getenv("RSTUDIO"))) {                       # #nocov start
         env <- .environmentWithRtools()
         for (var in names(env))
-            buildEnv[[var]] <- env[[var]]
+            buildEnv[[var]] <- env[[var]]                       # #nocov end
     }
 
     # create restore list
@@ -684,7 +742,7 @@ sourceCppFunction <- function(func, isVoid, dll, symbol) {
 # If we don't have the GNU toolchain already on the path then see if
 # we can find Rtools and add it to the path
 .environmentWithRtools <- function() {
-
+                                                                # #nocov start
     # Only proceed if we don't have the required tools on the path
     hasRtools <- nzchar(Sys.which("ls.exe")) && nzchar(Sys.which("gcc.exe"))
     if (!hasRtools) {
@@ -700,24 +758,28 @@ sourceCppFunction <- function(func, isVoid, dll, symbol) {
 
             # Check version
             ver <- key$`Current Version`
-            if (ver %in% (c("2.15", "2.16", "3.0", "3.1", "3.2", "3.3"))) {
+            if (ver %in% (c("2.15", "2.16", "3.0", "3.1", "3.2", "3.3", "3.4"))) {
                 # See if the InstallPath leads to the expected directories
-                isGcc49 <- FALSE
+                # R version 3.3.0 alpha (2016-03-25 r70378)
+                isGcc49 <- ver %in% c("3.3", "3.4") && as.numeric(R.Version()$`svn rev`) >= 70378
+
                 rToolsPath <- key$`InstallPath`
                 if (!is.null(rToolsPath)) {
                     # add appropriate path entries
                     path <- file.path(rToolsPath, "bin", fsep="\\")
                     if (!isGcc49)
                         path <- c(path, file.path(rToolsPath, "gcc-4.6.3", "bin", fsep="\\"))
-                    
+
                     # if they all exist then return a list with modified
                     # environment variables for the compilation
                     if (all(file.exists(path))) {
                         env <- list()
                         path <- paste(path, collapse = .Platform$path.sep)
                         env$PATH <- paste(path, Sys.getenv("PATH"), sep=.Platform$path.sep)
-                        if (isGcc49)
-                            env$RTOOLS <- .rtoolsPath(rToolsPath)
+                        if (isGcc49) {
+                            env$RTOOLS  <- .rtoolsPath(rToolsPath)
+                            env$BINPREF <- file.path(env$RTOOLS, "mingw_$(WIN)/bin//", fsep = "/")
+                        }
                         return(env)
                     }
                 }
@@ -725,20 +787,20 @@ sourceCppFunction <- function(func, isVoid, dll, symbol) {
         }
     }
 
-    return(NULL)
+    return(NULL)                                                # #nocov end
 }
 
 
-# Ensure that the path is suitable for passing as an RTOOLS 
+# Ensure that the path is suitable for passing as an RTOOLS
 # environment variable
 .rtoolsPath <- function(path) {
-    path <- gsub("\\\\", "/", path)
-    ## R 3.2.0 or later only:  path <- trimws(path) 
+    path <- gsub("\\\\", "/", path)                             # #nocov start
+    ## R 3.2.0 or later only:  path <- trimws(path)
     .localsub <- function(re, x) sub(re, "", x, perl = TRUE)
     path <- .localsub("[ \t\r\n]+$", .localsub("^[ \t\r\n]+", path))
     if (substring(path, nchar(path)) != "/")
         path <- paste(path, "/", sep="")
-    path
+    path                                                        # #nocov end
 }
 
 
@@ -778,7 +840,7 @@ sourceCppFunction <- function(func, isVoid, dll, symbol) {
 
     for (fun in .getHooksList("sourceCpp.onBuild")) {
 
-        if (is.character(fun))
+        if (is.character(fun))                                  # #nocov start
             fun <- get(fun)
 
         # allow the hook to cancel the build (errors in the hook explicitly
@@ -787,7 +849,7 @@ sourceCppFunction <- function(func, isVoid, dll, symbol) {
                              error = function(e) TRUE)
 
         if (!continue)
-            return (FALSE)
+            return (FALSE)                                      # #nocov end
     }
 
     return (TRUE)
@@ -806,10 +868,10 @@ sourceCppFunction <- function(func, isVoid, dll, symbol) {
     # Call the hooks in reverse order to align sequencing with onBuild
     for (fun in .getHooksList("sourceCpp.onBuildComplete")) {
 
-        if (is.character(fun))
+        if (is.character(fun))                                  # #nocov start
             fun <- get(fun)
 
-        try(fun(succeeded, output))
+        try(fun(succeeded, output))                             # #nocov end
     }
 }
 
@@ -845,7 +907,7 @@ sourceCppFunction <- function(func, isVoid, dll, symbol) {
             next
 
         # see if there is a plugin that we can extract includes from
-        plugin <- .getInlinePlugin(package)
+        plugin <- .getInlinePlugin(package)                     # #nocov start
         if (!is.null(plugin)) {
             includes <- .pluginIncludes(plugin)
             if (!is.null(includes)) {
@@ -862,7 +924,7 @@ sourceCppFunction <- function(func, isVoid, dll, symbol) {
                 pkgInclude <- paste("#include <", pkgHeader, ">", sep="")
                 include.after <- c(include.after, pkgInclude)
             }
-        }
+        }                                                       # #nocov end
     }
 
     # return the includes
@@ -875,7 +937,7 @@ sourceCppFunction <- function(func, isVoid, dll, symbol) {
 # we verify that the plugin was created using Rcpp.plugin.maker and then
 # use that assumption to correctly extract include.before and include.after
 .pluginIncludes <- function(plugin) {
-
+                                                                # #nocov start
     # First determine the standard suffix of an Rcpp plugin by calling
     # Rcpp.plugin.maker. If the plugin$includes has this suffix we know
     # it's an Rcpp plugin
@@ -905,7 +967,7 @@ sourceCppFunction <- function(func, isVoid, dll, symbol) {
     after <- after[nzchar(after)]
 
     # return before and after
-    list(before = before, after = after)
+    list(before = before, after = after)                        # #nocov end
 }
 
 # Parse a LinkingTo field into a character vector
@@ -921,7 +983,7 @@ sourceCppFunction <- function(func, isVoid, dll, symbol) {
 
 # show diagnostics for failed builds
 .showBuildFailureDiagnostics <- function() {
-
+                                                                # #nocov start
     # RStudio does it's own diagnostics so only do this for other environments
     if (nzchar(Sys.getenv("RSTUDIO")))
         return();
@@ -946,14 +1008,14 @@ sourceCppFunction <- function(func, isVoid, dll, symbol) {
                          "including a C++ compiler.\n", sep="")
         }
         message(msg)
-    }
+    }                                                           # #nocov end
 }
 
 # check if R development tools are installed (cache successful result)
 .hasDevelTools <- FALSE
 .checkDevelTools <- function() {
 
-    if (!.hasDevelTools) {
+    if (!.hasDevelTools) {                                      # #nocov start
         # create temp source file
         tempFile <- file.path(tempdir(), "foo.c")
         cat("void foo() {}\n", file = tempFile)
@@ -978,5 +1040,95 @@ sourceCppFunction <- function(func, isVoid, dll, symbol) {
             unlink(lib)
         }
     }
-    .hasDevelTools
+    .hasDevelTools                                              # #nocov end
 }
+
+
+# insert a dynlib entry into the cache
+.sourceCppDynlibInsert <- function(cacheDir, file, code, dynlib) {
+    cache <- .sourceCppDynlibReadCache(cacheDir)
+    index <- .sourceCppFindCacheEntryIndex(cache, file, code)
+    if (is.null(index))
+        index <- length(cache) + 1
+    cache[[index]] <- list(file = file, code = code, dynlib = dynlib)
+    .sourceCppDynlibWriteCache(cacheDir, cache)
+}
+
+# attempt to lookup a dynlib entry from the cache
+.sourceCppDynlibLookup <- function(cacheDir, file, code) {
+    cache <- .sourceCppDynlibReadCache(cacheDir)
+    index <- .sourceCppFindCacheEntryIndex(cache, file, code)
+    if (!is.null(index))
+        cache[[index]]$dynlib
+    else
+        list()
+}
+
+# write the cache to disk
+.sourceCppDynlibWriteCache <- function(cacheDir, cache) {
+    index_file <- file.path(cacheDir, "cache.rds")
+    save(cache, file = index_file, compress = FALSE)
+}
+
+# read the cache from disk
+.sourceCppDynlibReadCache <- function(cacheDir) {
+    index_file <- file.path(cacheDir, "cache.rds")
+    if (file.exists(index_file)) {
+        load(file = index_file)
+        get("cache")
+    } else {
+        list()
+    }
+}
+
+# search the cache for an entry that matches the file or code argument
+.sourceCppFindCacheEntryIndex <- function(cache, file, code) {
+
+    if (length(cache) > 0) {
+        for (i in 1:length(cache)) {
+            entry <- cache[[i]]
+            if ((nzchar(file) && identical(file, entry$file)) ||
+                (nzchar(code) && identical(code, entry$code))) {
+                if (file.exists(entry$dynlib$cppSourcePath))
+                    return(i)
+            }
+        }
+    }
+
+    # none found
+    NULL
+}
+
+# generate an R version / Rcpp version specific cache dir for dynlibs
+.sourceCppPlatformCacheDir <- function(cacheDir) {
+
+    dir <- file.path(cacheDir,
+                     paste("sourceCpp",
+                           R.version$platform,
+                           utils::packageVersion("Rcpp"),
+                           sep = "-"))
+    if (!dir.exists(dir))
+        dir.create(dir, recursive = TRUE)
+
+    dir
+}
+
+# generate a unique token for a cacheDir
+.sourceCppDynlibUniqueToken <- function(cacheDir) {
+    # read existing token (or create a new one)
+    token_file <- file.path(cacheDir, "token.rds")
+    if (file.exists(token_file))
+        load(file = token_file)
+    else
+        token <- 0
+
+    # increment
+    token <- token + 1
+
+    # write it
+    save(token, file = token_file)
+
+    # return it as a string
+    as.character(token)
+}
+
