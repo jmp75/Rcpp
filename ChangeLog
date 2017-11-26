@@ -1,3 +1,503 @@
+2017-11-17  Dirk Eddelbuettel  <edd@debian.org>
+
+        * DESCRIPTION: Release 0.12.14
+        * inst/NEWS.Rd: Release 0.12.14
+        * inst/bib/Rcpp.bib: Release 0.12.14
+        * vignettes/Rcpp.bib: Release 0.12.14
+        * inst/include/Rcpp/config.h: Release 0.12.14
+
+2017-11-04  Dirk Eddelbuettel  <edd@debian.org>
+
+        * vignettes/Rcpp-FAQ.Rmd: Add 'skip_final_break: true' toggle
+        * vignettes/Rcpp-attributes.Rmd: Idem
+        * vignettes/Rcpp-extending.Rmd: Idem
+        * vignettes/Rcpp-modules.Rmd: Idem
+        * vignettes/Rcpp-sugar.Rmd: Idem
+
+2017-10-30  Dirk Eddelbuettel  <edd@debian.org>
+
+        * inst/include/Rcpp.h: Unless RCPP_FORCE_OLD_DATE_DATETIME_VECTORS is
+        defined, define RCPP_NEW_DATE_DATETIME_VECTORS to switch to new date and
+        datetime vector as announced in release 0.12.8 one year ago
+
+2017-10-03  Dirk Eddelbuettel  <edd@debian.org>
+
+        * inst/include/Rcpp/iostream/Rstreambuf.h: White-space edits
+
+2017-10-02  Kirill Müller  <krlmlr@mailbox.org>
+
+        * inst/include/Rcpp/iostream/Rstreambuf.h: Embed buffer class instance
+        in Rostream to not require run-time allocation, and please Coverity
+
+2017-09-29  Dirk Eddelbuettel  <edd@debian.org>
+
+        * DESCRIPTION (Version, Date): Roll minor version
+
+        * DESCRIPTION (Description): Add <doi:...> per suggestion by CRAN
+
+        * inst/CITATION: Add PeerJ article, add doi info, reindent
+
+2017-09-26  Daniel C. Dillon  <dcdillon@gmail.com>
+
+        * inst/include/Rcpp/vector/MatrixRow.h: Added cbegin() / cend() to
+        MatrixRow, and fixing return types
+        * inst/include/Rcpp/vector/VectorBase.h: Ditto
+
+2017-09-24  Dirk Eddelbuettel  <edd@debian.org>
+
+        * DESCRIPTION: Release 0.12.13
+        * inst/NEWS.Rd: Release 0.12.13
+        * inst/bib/Rcpp.bib: Release 0.12.13
+        * inst/include/Rcpp/config.h: Release 0.12.13
+
+2017-09-23  Dirk Eddelbuettel  <edd@debian.org>
+
+        * inst/bib/Rcpp.bib: Updated references
+        * viignettes/Rcpp.bib: Idem
+
+2017-09-21  Dirk Eddelbuettel  <edd@debian.org>
+
+        * DESCRIPTION (Version, Date): Roll minor version
+
+        * vignettes/Rcpp-FAQ.Rmd (Rcpp): Add entry for 'symbols not found' error
+        requiring two runs of compileAttributes
+
+2017-09-20  James J Balamuta  <balamut2@illinois.edu>
+
+        * vignettes/rcpp-docs.cls: Removed
+
+2017-09-20  Dirk Eddelbuettel  <edd@debian.org>
+
+        * vignettes/Rcpp-FAQ.Rmd: Modified formatting and cleaned a bit more.
+        * vignettes/Rcpp-sugar.Rmd: Idem
+        * vignettes/Rcpp-introduction.Rmd: Added new PeerJ preprint
+
+2017-09-19  James J Balamuta  <balamut2@illinois.edu>
+
+        * vignettes/Rcpp-FAQ.Rmd: Formatted and cleaned up vignette.
+        * vignettes/Rcpp-sugar.Rmd: Idem
+
+2017-09-19  Dirk Eddelbuettel  <edd@debian.org>
+
+        * vignettes/Rcpp-attributes.Rmd: Formatted and cleaned up vignette.
+        * vignettes/Rcpp-extending.Rmd: Idem
+        * vignettes/Rcpp-modules.Rmd: Idem
+        * vignettes/Rcpp-package.Rmd: Idem
+        * vignettes/Rcpp-quickref.Rmd: Idem
+
+2017-09-18  James J Balamuta  <balamut2@illinois.edu>
+
+        * DESCRIPTION (Suggests): Added rmarkdown, knitr, and pinp dependencies
+        * .travis.yml: idem
+        * vignettes/Rcpp-quickref.Rmd: Translated vignette from highlight/sweave
+        to RMarkdown for use with the pinp template.
+        * vignettes/Rcpp-sugar.Rmd: Idem
+        * vignettes/Rcpp-package.Rmd: Idem
+        * vignettes/Rcpp-modules.Rmd: Idem
+        * vignettes/Rcpp-FAQ.Rmd: Idem
+        * vignettes/Rcpp-extending.Rmd: Idem
+        * vignettes/Rcpp-attributes.Rmd: Idem
+
+2017-09-18  Daniel C. Dillon  <dcdillon@gmail.com>
+
+        * inst/include/Rcpp/vector/MatrixRow.h: Added cbegin() and cend() to
+        the class along with a framework for proper const-correctness in the
+        future.
+
+2017-09-03  Dirk Eddelbuettel  <edd@debian.org>
+
+        * DESCRIPTION (Version, Date): Roll minor version
+
+2017-09-02  James J Balamuta  <balamut2@illinois.edu>
+
+        * inst/include/Rcpp/vector/VectorBase.h: Defined both iterator AND
+        const_iterator for future considerations.  Currently, as before, only
+        const_iterator is available (though it used to be called iterator).
+        Added cbegin() and cend() functions.  We should revisit whether there
+        should be a non-const iterator on VectorBase in the future.
+
+        * inst/include/Rcpp/vector/Matrix.h: Added cbegin() and cend()
+        functions.  Iterator defintions inherited from Vector are appropriate.
+
+        * inst/include/Rcpp/vector/MatrixColumn.h: Added cbegin() and cend()
+        functions.  Iterator definitions inherited from Vector are appropriate
+        because Matrix is column-major.
+
+        * inst/include/Rcpp/vector/Vector.h: Added cbegin() and cend()
+        functions.  Iterators are appropriate minus the problem with the const
+        proxy class of objects (which may or may not actually be const depending
+        on which one).
+
+        * inst/include/Rcpp/vector/traits.h: Removed (accidentally) some some
+        trailing whitespace on lines.
+
+2017-09-02  Dirk Eddelbuettel  <edd@debian.org>
+
+        * DESCRIPTION (Version): Roll minor version
+
+        * vignettes/Rcpp-jss-2011.Rnw: Renamed again from Rcpp-introduction-2011,
+        added reference to new Rcpp-introduction
+
+        * inst/bib/Rcpp.bib: Merged bibliography from new vignette; also added
+        PeerJ Preprint with new Rcpp Introduction
+
+2017-09-01  Dirk Eddelbuettel  <edd@debian.org>
+
+        * vignettes/Rcpp-introduction.Rnw: New introductory vignette from PeerJ
+        preprints but typeset 'more nicely'
+
+        * vignettes/rcpp-docs.cls: New LaTeX style file derived from pnas-new
+        and its supporting files
+
+        * vignettes/figures/: Three support figures for new vignette
+        * vignettes/intro2Rcpp.bib: New bibliography
+
+        * vignettes/Rcpp-introduction-2011.Rnw: Renamed from from Rcpp-introduction
+
+2017-08-26  Dirk Eddelbuettel  <edd@debian.org>
+
+        * .travis.yml (before_install): Use https for curl fetch
+
+2017-08-14  James J Balamuta  <balamut2@illinois.edu>
+
+        * vignettes/Rcpp-FAQ.Rnw: Sunset macOS documentation dealing with
+        toolchains by redirecting to the R Installation and Administration manual
+        * vignettes/.gitignore: Added various LaTeX build artifacts to ignore.
+
+2017-08-05  Dirk Eddelbuettel  <edd@debian.org>
+
+        * DESCRIPTION (Version, Date): Roll minor version and date
+
+        * inst/include/Rcpp/XPtr.h: Whitespace only-changes
+
+2017-08-04  Lei Yu  <leiyu_1981@qq.com>
+
+        * inst/include/Rcpp/Module.h: Correct one closing parenthesis
+
+2017-07-13  Dirk Eddelbuettel  <edd@debian.org>
+
+        * DESCRIPTION: Release 0.12.12
+        * inst/NEWS.Rd: Release 0.12.12
+        * inst/bib/Rcpp.bib: Release 0.12.12
+        * inst/include/Rcpp/config.h: Release 0.12.12
+
+        * README.md: Updated counts for dependents and tests
+
+        * debian/*: Changes for Debian release of 0.12.12
+
+2017-07-10  Jeff Pollock  <jeffpollock9@gmail.com>
+
+        * inst/include/Rcpp/Module.h: Avoid unused variable warning
+        * inst/include/Rcpp/Module_generated_Constructor.h: Ditto
+
+2017-07-09  Dirk Eddelbuettel  <edd@debian.org>
+
+        * DESCRIPTION (Version, Date): Roll minor version
+        * inst/include/Rcpp/config.h (RCPP_DEV_VERSION): Ditto
+
+        * inst/NEWS.Rd: Added missing entries
+
+2017-07-08  Kirill Müller  <krlmlr@mailbox.org>
+
+        * inst/include/Rcpp/vector/no_init.h: Accept R_xlen_t instead of int
+
+        * inst/include/Rcpp/internal/wrap.h: Use R_xlen_t not int in loop unroll
+        * inst/include/Rcpp/macros/unroll.h: Ditto
+        * inst/include/Rcpp/vector/Vector.h: Ditto
+
+2017-07-05  Dirk Eddelbuettel  <edd@debian.org>
+
+        * DESCRIPTION (Version, Date): Roll minor version
+        * inst/include/Rcpp/config.h (RCPP_DEV_VERSION): Ditto
+
+2017-07-02  JJ Allaire  <jj@rstudio.com>
+
+        * src/attributes.cpp: Generate C++ native routines with underscore
+        prefix to avoid export when standard exportPattern is used in NAMESPACE
+
+2017-06-29  JJ Allaire  <jj@rstudio.com>
+
+        * src/attributes.cpp: Replace dot (".") with underscore ("_") in package
+        names when generating native routine registrations.
+
+2017-06-27  Jeroen Ooms  <jeroenooms@gmail.com>
+
+        * inst/include/RcppCommon.h: Support attribute_visible macro
+
+2017-06-17  Kirill Müller  <krlmlr@mailbox.org>
+
+        * inst/include/Rcpp/Dimension.h: Explicit cast to int
+
+        * inst/include/Rcpp/exceptions.h: Don't declare unused arguments
+        * src/attributes.cpp: Ditto
+
+2017-06-14  JJ Allaire  <jj@rstudio.com>
+
+        * src/attributes.cpp: Add Shield around parameters in Rcpp::interfaces
+
+2017-06-07  Dirk Eddelbuettel  <edd@debian.org>
+
+	* README.md: Use alternates for img.shields.io GPL-2+ badges
+
+2017-06-06  Yu Gong  <armgong@yahoo.com>
+
+        * src/api.cpp: Also permit compilation under Haiku-OS
+
+2017-06-04  Dirk Eddelbuettel  <edd@debian.org>
+
+        * DESCRIPTION (Version, Date): Roll minor version
+
+        * man/Rcpp.plugin.maker.Rd: Update manual page to additional Imports
+        argument
+
+2017-06-02  JJ Allaire  <jj@rstudio.com>
+
+        * src/attributes.cpp: Automatically register init functions for
+        RcppModules
+        * R/Rcpp.package.skeleton.R: compileAttributes only after all code is
+        generated
+
+2017-06-01  JJ Allaire  <jj@rstudio.com>
+
+        * src/attributes.cpp: Fix registration for exports with name attribute.
+
+2017-05-30  Dirk Eddelbuettel  <edd@debian.org>
+
+        * inst/include/Rcpp/utils/tinyformat.h: Added missing newline
+
+2017-05-23  JJ Allaire  <jj@rstudio.com>
+
+        * R/Attributes.R: Execute tools::package_native_routine_registration_skeleton
+        within package rather than current working directory.
+        * src/attributes.cpp: Execute tools::package_native_routine_registration_skeleton
+         within package rather than current working directory.
+
+2017-05-22  Dirk Eddelbuettel  <edd@debian.org>
+
+        * R/inline.R (Rcpp.plugin.maker): Whitespace changes
+
+2017-05-20  Dirk Eddelbuettel  <edd@debian.org>
+
+        * DESCRIPTION: Release 0.12.11
+        * inst/NEWS.Rd: Release 0.12.11
+        * inst/bib/Rcpp.bib: Release 0.12.11
+        * inst/include/Rcpp/config.h: Release 0.12.11
+
+        * README.md: Updated counts for dependents and tests
+
+        * debian/*: Changes for Debian release of 0.12.10
+
+2017-05-19  Dirk Eddelbuettel  <edd@debian.org>
+
+        * inst/NEWS.Rd: Removed one duplicate entry
+        * inst/include/Rcpp/api/meat/Rcpp_eval.h (Rcpp): Minor whitespace changes
+
+2017-05-18  Dirk Eddelbuettel  <edd@debian.org>
+
+        * DESCRIPTION (Version, Date): Roll Date and Version once more
+        * inst/NEWS.Rd: Updated
+
+        * R/Attributes.R (.plugins[["openmp"]]): Fix typo in comment
+
+        * src/attributes.cpp (Rcpp): Use size_t (twice) to suppress nags from g++
+
+2017-05-16  JJ Allaire  <jj@rstudio.com>
+
+        * R/Attributes.R: Automatically generate native routine registrations.
+        * src/attributes.cpp: Automatically generate native routine registrations.
+        * R/Rcpp.package.skeleton.R: Don't generate native routines when creating
+        a package using attributes.
+
+2017-05-09  Dirk Eddelbuettel  <edd@debian.org>
+
+        * R/Rcpp.package.skeleton.R (Rcpp.package.skeleton): Under R 3.4.0, run
+        tools::package_native_routine_registration_skeleton to create src/init.c
+
+2017-05-07  Dirk Eddelbuettel  <edd@debian.org>
+
+        * DESCRIPTION (Version, Date): Roll minor version again
+
+        * inst/include/Rcpp/module/Module_Property.h: Remove two typed exception
+        specifications which upset g++ 7.1 or higher
+
+2017-05-05  Kirill Müller  <krlmlr@mailbox.org>
+
+        * inst/include/Rcpp/date_datetime/Date.h: Suppress -Wconversion warnings
+        * inst/include/Rcpp/date_datetime/Datetime.h: Idem
+        * inst/include/Rcpp/date_datetime/newDateVector.h: Idem
+        * inst/include/Rcpp/date_datetime/newDatetimeVector.h: Idem
+        * inst/include/Rcpp/sugar/functions/rowSums.h: Idem
+        * inst/include/Rcpp/sugar/functions/sample.h: Idem
+        * inst/include/Rcpp/sugar/functions/strings/trimws.h: Idem
+
+2017-04-26  Dirk Eddelbuettel  <edd@debian.org>
+
+        * inst/include/Rcpp/exceptions.h (string_to_try_error): Protect result
+        from Rf_mkString
+
+2017-04-25  Dirk Eddelbuettel  <edd@debian.org>
+
+        * R/Attributes.R (.plugins[["cpp11"]]): If R 3.4.0 or newer is used, set
+        USE_CXX11 (instead of the older USE_CXX1X);
+        (.plugins[["cpp14"]]): similarly updated for C++14
+        (.plugins[["cpp17"]]): similarly updated for C++17
+        (.plugins[["cpp98"]]): added
+
+2017-04-22  Nathan Russell  <russell.nr2012@gmail.com>
+
+        * inst/include/Rcpp/sugar/functions/strings/trimws.h: Added sugar
+        function trimws with unit tests
+        * inst/include/Rcpp/sugar/functions/strings/strings.h: Idem
+        * inst/unitTests/cpp/sugar.cpp: Idem
+        * inst/unitTests/runit.sugar.R: Idem
+
+2017-04-20  Dirk Eddelbuettel  <edd@debian.org>
+
+        * DESCRIPTION (Version, Date): Roll minor version
+        * inst/include/Rcpp/config.h (RCPP_DEV_VERSION): Idem
+
+        * inst/include/Rcpp/exceptions/cpp98/exceptions.h
+        (RCPP_ADVANCED_EXCEPTION_CLASS): Suppressing some warnings
+
+2017-04-20  James J Balamuta  <balamut2@illinois.edu>
+
+        * inst/include/Rcpp/api/meat/DottedPairImpl.h: Corrected format
+        specifier from '%s' to '%i'.
+
+2017-04-18  James J Balamuta  <balamut2@illinois.edu>
+
+        * inst/include/Rcpp/vector/Matrix.h: Corrected exception throws from
+        not_compatible to not_a_matrix.
+        * inst/include/Rcpp/S4.h: Fixed documentation detailing exception class
+        throw.
+        * inst/include/Rcpp/Environment.h: Improved error handling messages
+        * inst/include/Rcpp/Function.h: idem
+        * inst/include/Rcpp/Promise.h: idem
+        * inst/include/Rcpp/String.h: idem
+        * inst/include/Rcpp/Symbol.h: idem
+        * inst/include/Rcpp/XPtr.h: idem
+        * inst/include/Rcpp/as.h: idem
+        * inst/include/Rcpp/r_cast.h: idem
+        * inst/include/Rcpp/api/meat/DottedPairImpl.h: idem
+        * inst/include/Rcpp/internal/export.h: idem
+        * inst/include/Rcpp/proxy/DottedPairProxy.h: idem
+        * inst/include/Rcpp/proxy/SlotProxy.h: idem
+        * inst/include/Rcpp/vector/MatrixColumn.h: idem
+        * inst/include/Rcpp/vector/MatrixRow.h: idem
+        * inst/include/Rcpp/vector/Vector.h: idem
+
+2017-04-17  James J Balamuta  <balamut2@illinois.edu>
+
+        * inst/include/Rcpp/Rcpp/exceptions/cpp11/exceptions.h: Removed
+        semicolons from RCPP_ADVANCED_EXCEPTION_CLASS to quiet 'extra ;'
+        -Wpedantic
+
+        OB* inst/include/Rcpp/exceptions.h: Modified exceptions macros to support
+        a default string and removed generated stop, warning from file.
+        * inst/include/Rcpp/Rcpp/exceptions/cpp98/exceptions.h: Contains
+        generated RCPP_ADVANCED_EXCEPTION_CLASS macro, stop & warning.
+        * inst/include/Rcpp/Rcpp/exceptions/cpp11/exceptions.h: idem but
+        for variadic versions.
+        * inst/include/Rcpp/utils/tinyformat.h: Enabled ability to use variadic
+        tinyformat function if c++11 is detected.
+
+2017-04-14  James J Balamuta  <balamut2@illinois.edu>
+
+        * inst/include/Rcpp/utils/tinyformat.h: Refreshed tinyformat.h against
+        May 13, 2016 upstream, retained local mods.
+
+2017-04-14  Kirill Müller  <krlmlr@mailbox.org>
+
+        * inst/include/Rcpp/macros/macros.h: Remove unused variable warning in
+        BEGIN_RCPP macro
+
+        * inst/include/Rcpp/DataFrame.h: Explicitly call parent constructor
+
+        * inst/include/Rcpp/sugar/functions/rep.h: Remove variable name in
+        function declaration to suppress unused argument warning
+        * src/Rcpp_init.cpp: Ditto
+        * src/attributes.cpp: Ditto
+
+2017-04-11  Dirk Eddelbuettel  <edd@debian.org>
+
+        * inst/inst/unitTests/testRcppClass/src/init.c (R_init_testRcppClass): Call
+        R_registerRoutines() and R_useDynamicSymbols(); also ensure
+        _rcpp_module_boot_* is registered for each module
+        * inst/unitTests/testRcppClass/NAMESPACE: Added registration
+
+        * inst/unitTests/testRcppClass/DESCRIPTION (Title): Title case
+
+        * inst/unitTests/testRcppClass/R/rcpp_hello_world.R (rcpp_hello_world):
+        Call the renamed C++ function
+        * inst/unitTests/testRcppClass/src/rcpp_hello_world.cpp (rcpp_hello_world_cpp):
+        Renamed C++ function to be distinct from R function calling it
+        * inst/unitTests/testRcppClass/src/rcpp_hello_world.h: Ditto
+        * inst/unitTests/testRcppClass/man/rcpp_hello_world.Rd: Alias renamed
+        C++ function
+
+2017-04-09  Dirk Eddelbuettel  <edd@debian.org>
+
+        * inst/unitTests/testRcppModule/src/init.c (R_init_testRcppModule): Call
+        R_registerRoutines() and R_useDynamicSymbols(); also ensure
+        _rcpp_module_boot_* is registered for each module
+        * inst/unitTests/testRcppModule/NAMESPACE: Added registration
+
+        * inst/unitTests/testRcppModule/DESCRIPTION (Title): Title case
+
+        * inst/unitTests/testRcppModule/R/rcpp_hello_world.R (rcpp_hello_world):
+        Call the renamed C++ function
+        * inst/unitTests/testRcppModule/src/rcpp_hello_world.cpp (rcpp_hello_world_cpp):
+        Renamed C++ function to be distinct from R function calling it
+        * inst/unitTests/testRcppModule/src/rcpp_hello_world.h: Ditto
+        * inst/unitTests/testRcppModule/man/rcpp_hello_world.Rd: Alias renamed
+        C++ function
+
+        * inst/unitTests/testRcppModule/man/Rcpp_modules_examples.Rd: Alias
+        renamed modules
+        * inst/unitTests/testRcppModule/tests/modules.R: Call renamed module
+
+2017-04-03  Jim Hester  <james.f.hester@gmail.com>
+
+        * inst/include/Rcpp/exceptions.h: Added support for throwing
+        exceptions without call stacks.
+        * inst/include/Rcpp/macros/macros.h: Idem
+        * inst/unitTests/cpp/exceptions.cpp: Idem
+        * inst/unitTests/runit.exceptions.R: Idem
+
+2017-03-28  James J Balamuta  <balamut2@illinois.edu>
+
+        * inst/vignettes/Rcpp-FAQ.Rnw: Added "Known Issues" section to FAQ
+
+2017-03-25  Dirk Eddelbuettel  <edd@debian.org>
+
+        * LICENSE: Added
+        * .Rbuildignore: Do not include LICENSE in package
+
+2017-03-17  Dirk Eddelbuettel  <edd@debian.org>
+
+        * DESCRIPTION: Release 0.12.10
+        * inst/NEWS.Rd: Release 0.12.10
+        * inst/bib/Rcpp.bib: Release 0.12.10
+        * inst/include/Rcpp/config.h: Release 0.12.10
+
+        * README.md: Updated counts for dependents and tests
+
+        * debian/*: Changes for Debian release of 0.12.10
+
+2017-03-15  Jeroen Ooms  <jeroenooms@gmail.com>
+
+        * inst/include/Rcpp/XPtr.h: added finalizeOnExit parameter
+
+2017-02-28  Dirk Eddelbuettel  <edd@debian.org>
+
+        * src/Rcpp_init.cpp (R_init_Rcpp): Call R_useDynamicSymbols()
+
+        * DESCRIPTION (Version, Date): New minor version
+
+2017-02-25  Dirk Eddelbuettel  <edd@debian.org>
+
+        * vignettes/Rcpp-FAQ.Rnw: New subsection on C++11, C++14, C++17
+
 2017-02-17  Dirk Eddelbuettel  <edd@debian.org>
 
         * R/tools.R: More #nocov
@@ -607,7 +1107,7 @@
         * inst/unitTests/cpp/sugar.cpp: Add unit test for the na_omit
         * inst/unitTests/runit.sugar.R: Ditto
 
-2016-06-02  Kirill Müller <krlmlr@mailbox.org>
+2016-06-02  Kirill Müller  <krlmlr@mailbox.org>
 
         * inst/include/Rcpp/algorithm.h: Use "long long" only if available
         * inst/include/Rcpp/exceptions.h: Annotate stop() with NORET

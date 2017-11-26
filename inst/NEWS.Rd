@@ -3,7 +3,149 @@
 \newcommand{\ghpr}{\href{https://github.com/RcppCore/Rcpp/pull/#1}{##1}}
 \newcommand{\ghit}{\href{https://github.com/RcppCore/Rcpp/issues/#1}{##1}}
 
-\section{Changes in Rcpp version 0.12.10 (2017-03-xx)}{
+\section{Changes in Rcpp version 0.12.14 (2017-11-17)}{
+  \itemize{
+    \item Changes in Rcpp API:
+    \itemize{
+      \item New const iterators functions \code{cbegin()} and \code{cend()}
+      added to \code{MatrixRow} as well (Dan Dillon in \ghpr{750}).
+      \item The \code{Rostream} object now contains a \code{Buffer} rather than
+      allocating one (Kirill Müller in \ghpr{763}).
+      \item New \code{DateVector} and \code{DatetimeVector} classes are now the
+      default fully deprecating the old classes as announced one year ago.
+    }
+    \item Changes in Rcpp Package:
+    \itemize{
+      \item DESCRIPTION file now list doi information per CRAN suggestion.
+    }
+    \item Changes in Rcpp Documentation:
+    \itemize{
+      \item Update CITATION file with doi information and PeerJ preprint.
+    }
+  }
+}
+
+\section{Changes in Rcpp version 0.12.13 (2017-09-24)}{
+  \itemize{
+    \item Changes in Rcpp API:
+    \itemize{
+      \item New const iterators functions \code{cbegin()} and \code{cend()} have
+      been added to several vector and matrix classes (Dan Dillon and James
+      Balamuta in \ghpr{748}) starting to address \ghit{741}).
+    }
+    \item Changes in Rcpp Modules:
+    \itemize{
+      \item Misplacement of one parenthesis in macro \code{LOAD_RCPP_MODULE}
+      was corrected (Lei Yu in \ghpr{737})
+    }
+    \item Changes in Rcpp Documentation:
+    \itemize{
+      \item Rewrote the macOS sections to depend on official documentation due
+      to large changes in the macOS toolchain. (James Balamuta in \ghpr{742}
+      addressing issue \ghit{682}).
+      \item Added a new vignette \sQuote{Rcpp-introduction} based on new PeerJ
+      preprint, renamed existing introduction to \sQuote{Rcpp-jss-2011}.
+      \item Transitioned all vignettes to the 'pinp' RMarkdown template
+      (James Balamuta and Dirk Eddelbuettel in \ghpr{755} addressing
+      issue \ghit{604}).
+      \item Added an entry on running `compileAttributes()` twice to the
+      Rcpp-FAQ (\ghit{#745}).
+    }
+  }
+}
+
+\section{Changes in Rcpp version 0.12.12 (2017-07-13)}{
+  \itemize{
+    \item Changes in Rcpp API:
+    \itemize{
+      \item The \code{tinyformat.h} header now ends in a newline (\ghit{701}).
+      \item Fixed rare protection error that occurred when fetching stack traces
+      during the construction of an Rcpp exception (Kirill Müller in \ghpr{706}).
+      \item Compilation is now also possibly on Haiku-OS (Yo Gong in \ghpr{708}
+      addressing \ghit{707}).
+      \item Dimension attributes are explicitly cast to \code{int} (Kirill
+      Müller in \ghpr{715}).
+      \item Unused arguments are no longer declared (Kirill Müller in
+      \ghpr{716}).
+      \item Visibility of exported functions is now supported via the R macro
+      \code{atttribute_visible} (Jeroen Ooms in \ghpr{720}).
+      \item The \code{no_init()} constructor accepts \code{R_xlen_t} (Kirill
+      Müller in \ghpr{730}).
+      \item Loop unrolling used \code{R_xlen_t} (Kirill Müller in \ghpr{731}).
+      \item Two unused-variables warnings are now avoided (Jeff Pollock in
+      \ghpr{732}).
+    }
+    \item Changes in Rcpp Attributes:
+    \itemize{
+      \item Execute tools::package_native_routine_registration_skeleton
+      within package rather than current working directory (JJ in \ghpr{697}).
+      \item The R portion no longer uses \code{dir.exists} to no require R 3.2.0
+      or newer (Elias Pipping in \ghpr{698}).
+      \item Fix native registration for exports with name attribute (JJ in \ghpr{703}
+      addressing \ghit{702}).
+      \item Automatically register init functions for Rcpp Modules (JJ in \ghpr{705}
+      addressing \ghit{704}).
+      \item Add Shield around parameters in Rcpp::interfaces (JJ in \ghpr{713}
+      addressing \ghit{712}).
+      \item Replace dot (".") with underscore ("_") in package names when generating
+      native routine registrations (JJ in \ghpr{722} addressing \ghit{721}).
+      \item Generate C++ native routines with underscore ("_") prefix to avoid
+      exporting when standard exportPattern is used in NAMESPACE (JJ in
+      \ghpr{725} addressing \ghit{723}).
+    }
+  }
+}
+
+\section{Changes in Rcpp version 0.12.11 (2017-05-20)}{
+  \itemize{
+    \item Changes in Rcpp API:
+    \itemize{
+      \item Rcpp::exceptions can now be constructed without a call stack (Jim
+      Hester in \ghpr{663} addressing \ghit{664}).
+      \item Somewhat spurious compiler messages under very verbose settings are
+      now suppressed (Kirill Mueller in \ghpr{670}, \ghpr{671}, \ghpr{672},
+      \ghpr{687}, \ghpr{688}, \ghpr{691}).
+      \item Refreshed the included \code{tinyformat} template library
+      (James Balamuta in \ghpr{674} addressing \ghit{673}).
+      \item Added \code{printf}-like syntax support for exception classes and
+      variadic templating for \code{Rcpp::stop} and \code{Rcpp::warning}
+      (James Balamuta in \ghpr{676}).
+      \item Exception messages have been rewritten to provide additional
+      information. (James Balamuta in \ghpr{676} and \ghpr{677} addressing
+      \ghit{184}).
+      \item One more instance of \code{Rf_mkString} is protected from garbage
+      collection (Dirk in \ghpr{686} addressing \ghit{685}).
+      \item Two exception specification that are no longer tolerated by
+      \code{g++-7.1} or later were removed (Dirk in \ghpr{690} addressing
+      \ghit{689})
+    }
+    \item Changes in Rcpp Documentation:
+    \itemize{
+      \item Added a Known Issues section to the Rcpp FAQ vignette
+      (James Balamuta in \ghpr{661} addressing \ghit{628}, \ghit{563},
+      \ghit{552}, \ghit{460}, \ghit{419}, and \ghit{251}).
+    }
+    \item Changes in Rcpp Sugar:
+    \itemize{
+      \item Added sugar function \code{trimws} (Nathan Russell in \ghpr{680}
+      addressing \ghit{679}).
+    }
+    \item Changes in Rcpp Attributes:
+    \itemize{
+      \item Automatically generate native routine registrations (JJ in \ghpr{694})
+      \item The plugins for C++11, C++14, C++17 now set the values R 3.4.0 or
+      later expects; a plugin for C++98 was added (Dirk in \ghpr{684} addressing
+      \ghit{683}).
+    }
+    \item Changes in Rcpp support functions:
+    \itemize{
+      \item The \code{Rcpp.package.skeleton()} function now creates a package
+      registration file provided R 3.4.0 or later is used (Dirk in \ghpr{692})
+    }
+  }
+}
+
+\section{Changes in Rcpp version 0.12.10 (2017-03-17)}{
   \itemize{
     \item Changes in Rcpp API:
     \itemize{
@@ -11,6 +153,8 @@
       DataFrame (James Balamuta in \ghpr{638} addressing \ghit{630}).
       \item Fixed single-character handling in \code{Rstreambuf} (Iñaki Ucar in
       \ghpr{649} addressing \ghit{647}).
+      \item XPtr gains a parameter \code{finalizeOnExit} to enable running the
+       finalizer when R quits (Jeroen Ooms in \ghpr{656} addressing \ghit{655}).
     }
     \item Changes in Rcpp Sugar:
     \itemize{
@@ -19,10 +163,15 @@
       \item The \code{algorithm.h} file now accomodates the Intel compiler
       (Dirk in \ghpr{643} and Dan in \ghpr{645} addressing issue \ghit{640}).
     }
-    \item Changes in Rcpp Attributes
+    \item Changes in Rcpp Attributes:
     \itemize{
       \item The C++17 standard is supported with a new plugin (used eg for
       \code{g++-6.2}).
+    }
+    \item Changes in Rcpp Documentation:
+    \itemize{
+      \item An overdue explanation of how C++11, C++14, and C++17 can be used
+      was added to the Rcpp FAQ.
     }
   }
 }
