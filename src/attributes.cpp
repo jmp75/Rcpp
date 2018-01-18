@@ -2803,7 +2803,7 @@ namespace attributes {
     FileInfo::FileInfo(const std::string& path)
         : path_(path), exists_(false), lastModified_(0)
     {
-    #ifdef _WIN32
+    #ifdef _MSC_VER
         struct _stat buffer;
         int result = _stat(path.c_str(), &buffer);
     #else
