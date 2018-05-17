@@ -173,12 +173,17 @@ DottedPairProxyPolicy<CLASS>::const_DottedPairProxy::operator T() const {
 }
 
 // FieldProxy
-template <typename CLASS>
-typename FieldProxyPolicy<CLASS>::FieldProxy&
-FieldProxyPolicy<CLASS>::FieldProxy::operator=(const FieldProxyPolicy<CLASS>::FieldProxy& rhs) {
-    if (this != &rhs) set(rhs.get());
-    return *this;
-}
+// HACK: commenting out as with VCPP VS2017:
+//Rcpp/api/meat/proxy.h(178): error C2065: 'rhs' : undeclared identifier
+//Rcpp/api/meat/proxy.h(178): warning C4346: 'Rcpp::FieldProxyPolicy<CLASS>::FieldProxy' : dependent name is not a type
+//        prefix with 'typename' to indicate a type
+//Rcpp/api/meat/proxy.h(178): error C2350: 'Rcpp::FieldProxyPolicy<CLASS>::FieldProxy::operator =' is not a static member
+//template <typename CLASS>
+//typename FieldProxyPolicy<CLASS>::FieldProxy&
+//FieldProxyPolicy<CLASS>::FieldProxy::operator=(const FieldProxyPolicy<CLASS>::FieldProxy& rhs) {
+//    if (this != &rhs) set(rhs.get());
+//    return *this;
+//}
 
 template <typename CLASS>
 template <typename T>
