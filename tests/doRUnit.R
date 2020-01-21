@@ -1,4 +1,4 @@
-# Copyright (C) 2009 - 2014 Dirk Eddelbuettel and Romain Francois
+# Copyright (C) 2009 - 2018 Dirk Eddelbuettel and Romain Francois
 # Earlier copyrights Gregor Gorjanc, Martin Maechler and Murray Stokely as detailed below
 #
 # This file is part of Rcpp.
@@ -28,43 +28,47 @@
 ##
 ## Dirk Eddelbuettel, Feb 2014
 
-stopifnot(require(RUnit, quietly=TRUE))
-stopifnot(require(Rcpp, quietly=TRUE))
+if (requireNamespace("RUnit", quietly=TRUE) &&
+    requireNamespace("Rcpp", quietly=TRUE)) {
 
-## Set a seed to make the test deterministic
-set.seed(42)
+    library(RUnit)
+    library(Rcpp)
 
-## Define tests
-testSuite <- defineTestSuite(name = "Rcpp Unit Tests",
-                             dirs = system.file("unitTests", package = "Rcpp"),
-                             testFuncRegexp = "^[Tt]est.+")
+    set.seed(42)    					# Set a seed to make the test deterministic
 
-## without this, we get (or used to get) unit test failures
-Sys.setenv("R_TESTS"="")
+    ## Define tests
+    testSuite <- defineTestSuite(name = "Rcpp Unit Tests",
+                                 dirs = system.file("unitTests", package = "Rcpp"),
+                                 testFuncRegexp = "^[Tt]est.+")
 
-## force tests to be executed if in dev release which we define as
-## having a sub-release, eg 0.9.15.5 is one whereas 0.9.16 is not
-if (length(strsplit(packageDescription("Rcpp")$Version, "\\.")[[1]]) > 3) {	# dev release, and
-    if (Sys.getenv("RunAllRcppTests") != "no") { 				# if env.var not yet set
-        message("Setting \"RunAllRcppTests\"=\"yes\" for development release\n")
-        Sys.setenv("RunAllRcppTests"="yes")
+    Sys.setenv("R_TESTS"="")    		# without this, we get (or used to get) unit test failures
+
+    ## Force tests to be executed if in dev release which we define as
+    ## having a sub-release, eg 0.9.15.5 is one whereas 0.9.16 is not
+    if (length(strsplit(packageDescription("Rcpp")$Version, "\\.")[[1]]) > 3) {	# dev release, and
+        if (Sys.getenv("RunAllRcppTests") != "no") { 				# if env.var not yet set
+            message("Setting \"RunAllRcppTests\"=\"yes\" for development release\n")
+            Sys.setenv("RunAllRcppTests"="yes")
+        }
     }
-}
 
-## Run tests
-tests <- runTestSuite(testSuite)
+    ## On Travis also always set tests; see
+    ## https://docs.travis-ci.com/user/environment-variables/#default-environment-variables
+    if ((Sys.getenv("CI") == "true") || (Sys.getenv("TRAVIS") == "true") ||
+        (Sys.getenv("CONTINUOUS_INTEGRATION") == "true")) {
+            message("Always enabling \"RunAllRcppTests\"=\"yes\" on Travis\n")
+            Sys.setenv("RunAllRcppTests"="yes")
+    }
 
-## Print results
-printTextProtocol(tests)
+    tests <- runTestSuite(testSuite)		# Run tests
 
-## Return success or failure to R CMD CHECK
-if (getErrors(tests)$nFail > 0) {
-    stop("TEST FAILED!")
-}
-if (getErrors(tests)$nErr > 0) {
-    stop("TEST HAD ERRORS!")
-}
-if (getErrors(tests)$nTestFunc < 1 && Sys.getenv("RunAllRcppTests")=="yes") {
-    stop("NO TEST FUNCTIONS RUN!")
-}
+    printTextProtocol(tests)			# Print results
+    if (Sys.info()[["sysname"]] != "Windows")
+        printTextProtocol(tests, file="/tmp/RcppTestLog.txt")
 
+    ## Return success or failure to R CMD CHECK
+    if (getErrors(tests)$nFail > 0) stop("TEST FAILED!")
+    if (getErrors(tests)$nErr > 0) stop("TEST HAD ERRORS!")
+    if (getErrors(tests)$nTestFunc < 1 && Sys.getenv("RunAllRcppTests")=="yes")
+        stop("NO TEST FUNCTIONS RUN!")
+}

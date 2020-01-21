@@ -153,6 +153,7 @@ namespace attributes {
     const char * const kExportAttribute = "export";
     const char * const kExportName = "name";
     const char * const kExportRng = "rng";
+    const char * const kInitAttribute = "init";
     const char * const kDependsAttribute = "depends";
     const char * const kPluginsAttribute = "plugins";
     const char * const kInterfacesAttribute = "interfaces";
@@ -673,6 +674,9 @@ namespace attributes {
                                       const std::string& name) const;
 
     private:
+        // for generating calls to init functions
+        std::vector<Attribute> initFunctions_;
+
         // for generating C++ interfaces
         std::vector<Attribute> cppExports_;
 
@@ -1161,7 +1165,7 @@ namespace attributes {
 
             // Now read into a list of strings (which we can pass to regexec)
             // First read into a std::deque (which will handle lots of append
-            // operations efficiently) then copy into an R chracter vector
+            // operations efficiently) then copy into an R character vector
             std::deque<std::string> lines;
             readLines(buffer, &lines);
             lines_ = Rcpp::wrap(lines);
@@ -1323,8 +1327,8 @@ namespace attributes {
         // and it doesn't appear at the end of the file
         Function function;
 
-        // special handling for export
-        if (name == kExportAttribute) {
+        // special handling for export and init
+        if (name == kExportAttribute || name == kInitAttribute) {
 
             // parse the function (unless we are at the end of the file in
             // which case we print a warning)
@@ -1586,27 +1590,44 @@ namespace attributes {
 
         int templateCount = 0;
         int parenCount = 0;
-        bool insideQuotes = false;
         std::string currentArg;
         std::vector<std::string> args;
-        char prevChar = 0;
-        for (std::string::const_iterator
-                            it = argText.begin(); it != argText.end(); ++it) {
+        char quote = 0;
+        bool escaped = false;
+        typedef std::string::const_iterator it_t;
+        for (it_t it = argText.begin(); it != argText.end(); ++it) {
+
+            // Store current character
             char ch = *it;
 
-            if (ch == '"' && prevChar != '\\') {
-                insideQuotes = !insideQuotes;
-            }
+            // Ignore quoted strings and character values in single quotes
+            if ( ! quote && (ch == '"' || ch == '\''))
+                quote = ch;
+            else if (quote && ch == quote && ! escaped)
+                quote = 0;
 
-            if ((ch == ',') &&
+            // Escaped character inside quotes
+            if (escaped)
+                escaped = false;
+            else if (quote && ch == '\\')
+                escaped = true;
+
+            // Detect end of argument declaration
+            if ( ! quote &&
+                (ch == ',') &&
                 (templateCount == 0) &&
-                (parenCount == 0) &&
-                !insideQuotes) {
+                (parenCount == 0)) {
                 args.push_back(currentArg);
                 currentArg.clear();
                 continue;
-            } else {
+            }
+
+            // Append current character if not a space at start
+            if ( ! currentArg.empty() || ch != ' ')
                 currentArg.push_back(ch);
+
+            // Count use of potentially enclosed brackets
+            if ( ! quote) {
                 switch(ch) {
                     case '<':
                         templateCount++;
@@ -1622,8 +1643,6 @@ namespace attributes {
                         break;				// #nocov
                 }
             }
-
-            prevChar = ch;
         }
 
         if (!currentArg.empty())
@@ -1673,6 +1692,7 @@ namespace attributes {
     bool SourceFileAttributesParser::isKnownAttribute(const std::string& name)
                                                                         const {
         return name == kExportAttribute ||
+               name == kInitAttribute ||
                name == kDependsAttribute ||
                name == kPluginsAttribute ||
                name == kInterfacesAttribute;
@@ -1894,6 +1914,8 @@ namespace attributes {
 
                 // add it to the native routines list
                 nativeRoutines_.push_back(*it);
+            } else if (it->name() == kInitAttribute) {
+                initFunctions_.push_back(*it);
             }
         }                                               // #nocov end
 
@@ -1967,7 +1989,7 @@ namespace attributes {
          }
 
          // write native routines
-         if (!hasPackageInit && (!nativeRoutines_.empty() || !modules_.empty())) {
+         if (!hasPackageInit && (!nativeRoutines_.empty() || !modules_.empty() || !initFunctions_.empty())) {
 
             // build list of routines we will register
             std::vector<std::string> routineNames;
@@ -2022,10 +2044,28 @@ namespace attributes {
 
             ostr() << std::endl;
 
+            // write prototypes for init functions
+            for (std::size_t i = 0; i<initFunctions_.size(); i++) {
+                const Function& function = initFunctions_[i].function();
+                printFunction(ostr(), function, false);
+                ostr() << ";" << std::endl;
+            }
+
             ostr() << "RcppExport void R_init_" << packageCpp() << "(DllInfo *dll) {" << std::endl;
             ostr() << "    R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);" << std::endl;
             ostr() << "    R_useDynamicSymbols(dll, FALSE);" << std::endl;
+            // call init functions
+            for (std::size_t i = 0; i<initFunctions_.size(); i++) {
+                const Function& function = initFunctions_[i].function();
+                ostr() << "    " << function.name() << "(dll);" << std::endl;
+            }
             ostr() << "}" << std::endl;
+         }
+
+         // warn if both a hand-written package init function and Rcpp::init are used
+         if (hasPackageInit && !initFunctions_.empty()) {
+            showWarning("[[Rcpp::init]] attribute used in a package with an explicit "
+                        "R_init function (Rcpp::init functions will not be called)");
          }
     }
 
@@ -2189,6 +2229,10 @@ namespace attributes {
                 ostr() << "        if (rcpp_result_gen.inherits(\"interrupted-error\"))"
                        << std::endl
                        << "            throw Rcpp::internal::InterruptedException();"
+                       << std::endl;
+                ostr() << "        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))"
+                       << std::endl
+                       << "            throw Rcpp::LongjumpException(rcpp_result_gen);"
                        << std::endl;
                 ostr() << "        if (rcpp_result_gen.inherits(\"try-error\"))"
                        << std::endl
@@ -2773,6 +2817,11 @@ namespace attributes {
                      << "    if (rcpp_isInterrupt_gen) {" << std::endl
                      << "        UNPROTECT(1);" << std::endl
                      << "        Rf_onintr();" << std::endl
+                     << "    }" << std::endl
+                     << "    bool rcpp_isLongjump_gen = Rcpp::internal::isLongjumpSentinel(rcpp_result_gen);" << std::endl
+                     << "    if (rcpp_isLongjump_gen) {" << std::endl
+                                 // No need to unprotect before jump
+                     << "        Rcpp::internal::resumeJump(rcpp_result_gen);" << std::endl
                      << "    }" << std::endl
                      << "    Rboolean rcpp_isError_gen = Rf_inherits(rcpp_result_gen, \"try-error\");"
                      << std::endl

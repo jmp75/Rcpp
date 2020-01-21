@@ -65,16 +65,32 @@ namespace Rcpp {
 
     namespace internal {
 
+        int rngSynchronizationSuspended = 0;
+
         // [[Rcpp::register]]
         unsigned long enterRNGScope() {
-            GetRNGstate();
+            if (rngSynchronizationSuspended == 0)
+                GetRNGstate();
             return 0;
         }
 
         // [[Rcpp::register]]
         unsigned long exitRNGScope() {
-            PutRNGstate();
+            if (rngSynchronizationSuspended == 0)
+                PutRNGstate();
             return 0;
+        }
+
+        // [[Rcpp::register]]
+        unsigned long beginSuspendRNGSynchronization() {
+            ++rngSynchronizationSuspended;
+            return rngSynchronizationSuspended;
+        }
+
+        // [[Rcpp::register]]
+        unsigned long endSuspendRNGSynchronization() {
+            --rngSynchronizationSuspended;
+            return rngSynchronizationSuspended;
         }
 
         // [[Rcpp::register]]
@@ -309,3 +325,11 @@ SEXP stack_trace(const char* file, int line) {
 
 // }}}
 
+
+// [[Rcpp::internal]]
+SEXP getRcppVersionStrings() {
+    Shield<SEXP> versionstring(Rf_allocVector(STRSXP,2));
+    SET_STRING_ELT(versionstring, 0, Rf_mkChar(RCPP_VERSION_STRING));
+    SET_STRING_ELT(versionstring, 1, Rf_mkChar(RCPP_DEV_VERSION_STRING));
+    return versionstring;
+}
