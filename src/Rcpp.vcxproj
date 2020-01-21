@@ -21,13 +21,14 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{FD7D7EEE-279B-4A96-A86E-531B84C8CDB5}</ProjectGuid>
     <RootNamespace>Rcpp</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseOfMfc>false</UseOfMfc>
     <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -43,12 +44,12 @@
     <TargetName>Rcpp</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Platform)'=='Win32'">
-    <LibraryPath>$(LibraryPath);./libfiles/i386</LibraryPath>
-    <ReferencePath>$(ReferencePath);./libfiles/i386</ReferencePath>
+    <LibraryPath>./libfiles/i386;$(LibraryPath)</LibraryPath>
+    <ReferencePath>./libfiles/i386;$(ReferencePath)</ReferencePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Platform)'=='x64'">
-    <LibraryPath>$(LibraryPath);./libfiles/x64</LibraryPath>
-    <ReferencePath>$(ReferencePath);./libfiles/x64</ReferencePath>
+    <LibraryPath>./libfiles/x64;$(LibraryPath)</LibraryPath>
+    <ReferencePath>./libfiles/x64;$(ReferencePath)</ReferencePath>
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
@@ -61,7 +62,6 @@
     <Link>
       <SubSystem>NotSet</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(LocalLibraryPaths);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>Rdll.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ModuleDefinitionFile>Rcpp.def</ModuleDefinitionFile>
     </Link>
